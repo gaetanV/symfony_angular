@@ -1,0 +1,24 @@
+Tools\AngularBundle\Entity\UserTest:
+    properties:
+        username:
+             - NotBlank: ~
+             - Regex:
+                pattern: "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-zA-Z]{2,4}/"
+                match:   true
+                message: Regex  email
+        password:
+             - NotBlank: ~
+             - Regex:
+                pattern: "/[0-9]+/"
+                match:   true
+                message: Regex  au moins un chiffre
+             - Regex:
+                pattern: "/[a-zA-Z]+/"
+                match:   true
+                message: Regex  au moins une lettre
+             - Length:
+                min: 2
+                max: 5
+                minMessage: "Votre nom doit faire au moins {{ limit }} caractères"
+                maxMessage: "Votre nom ne peut pas être plus long que {{ limit }} caractères"
+ 

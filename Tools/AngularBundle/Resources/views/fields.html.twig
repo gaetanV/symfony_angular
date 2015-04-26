@@ -1,0 +1,129 @@
+{# This is an extension of Twig Form Theme #}
+{# We redefine form elements, so they are binded with Angular model #}
+{% extends "form_div_layout.html.twig" %}
+
+{%- block form_row -%}
+    <div>      
+        {{- form_label(form) -}}
+        {{- form_widget(form) -}}
+        {#validator  <!--  {{- form_errors(form) -}} -->  #}  
+        {% for validator in form.constraints|keys %}
+                 {#TO DO FORM NAME #} 
+            {% set formName = "form"%}
+           {% set constraints = form.constraints[validator]%}
+         
+           {% if  validator=="NotBlank" %}
+                     {% set constraint = constraints[0]%}
+                        
+                           <span ng-show="{{formName}}['{{ full_name }}'].$error.required">{{constraint.message |trans}}</span>
+    
+           {% endif %}
+          
+           {% if  validator=="Length" %}
+                     {% set constraint = constraints[0]%}
+                   <span ng-show="{{formName}}['{{ full_name }}'].$error.minlength">{{constraint.minMessage |trans}}</span>
+                   <span ng-show="{{formName}}['{{ full_name }}'].$error.maxlength">{{constraint.maxMessage |trans}}</span>
+           {% endif %}
+              
+           
+           {% if  validator=="Regex" %}
+                     {% for constraint in constraints %}
+                           <span ng-show="{{formName}}['{{ full_name }}'].$error.regex{{loop.index}}">{{constraint.message |trans}}</span>
+                     {% endfor%}
+                
+            {% endif %}
+            
+            {% if  validator=="Match" %}
+                  {% set constraint = constraints[0]%}
+                              <span ng-show="{{formName}}['{{ full_name }}'].$error.match && {{formName}}['{{formName}}{{ constraint.match }}'].$valid || {{formName}}['{{ full_name }}'].$error.required &&  {{formName}}['{{ constraint.match }}'].$valid ">{{ constraint.message |trans }}</span>   
+            {% endif %}
+            
+   
+        {% endfor %}
+        
+        
+    </div>
+{%- endblock form_row -%}
+
+
+
+{%- block form_start -%}
+    {% set method = method|upper %}
+    {%- if method in ["GET", "POST"] -%}
+        {% set form_method = method %}
+    {%- else -%}
+        {% set form_method = "POST" %}
+    {%- endif -%}
+    <form name="{{ name }}" method="{{ form_method|lower }}" action="{{ action }}"{% for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}{% if multipart %} enctype="multipart/form-data"{% endif %}>
+    {%- if form_method != method -%}
+        <input type="hidden" name="_method" value="{{ method }}" />
+    {%- endif -%}
+{%- endblock form_start -%}
+
+{%- block form_end -%}
+    {%- if not render_rest is defined or render_rest -%}
+        {{ form_rest(form) }}
+    {%- endif -%}
+    </form>
+{%- endblock form_end -%}
+
+{%- block widget_attributes -%}
+    id="{{ id }}" name="{{ full_name }}"
+    
+     {#ngModel#}
+     ng-model="data['{{ full_name }}']"
+       {#TO DO FORM NAME #} 
+            {% set formName = "form"%}
+          {#TO DO CHANGER DATA PAR DATA FORM NAME #} 
+  
+         {% for validator in form.constraints|keys %}
+              
+           {% set constraints = form.constraints[validator]%}
+           
+           {% if  validator=="Length" %} 
+               {% set constraint = constraints[0]%}
+               ng-minlength="{{constraint.min}}" ng-maxlength="{{constraint.max}}"
+           {% endif %}
+            {% if  validator=="Regex" %} 
+                   multi-pattern='{{'{'}}{% for constraint in constraints %}"regex{{loop.index}}":"{{constraint.pattern|slice(1, (constraint.pattern|length)-2 )}}"{% if  loop.last==false %},{% endif %}{% endfor%}{{'}'}}' 
+           {% endif %}
+           {% if  validator=="Match" %}
+                  {% set constraint = constraints[0]%}
+                          match-field="data['{{formName}}{{constraint.match}}']" required="" ng-disabled="!{{formName}}['{{formName}}{{constraint.match}}'].$valid"
+            {% endif %}
+           
+        {% endfor %}
+     
+    {%- if read_only %} readonly="readonly"{% endif -%}
+    {%- if disabled %} disabled="disabled"{% endif -%}
+    {%- if required %} required="required"{% endif -%}
+    {%- for attrname, attrvalue in attr -%}
+        {{- " " -}}
+        {%- if attrname in ['placeholder', 'title'] -%}
+            {{- attrname }}="{{ attrvalue|trans({}, translation_domain) }}"
+        {%- elseif attrvalue is sameas(true) -%}
+            {{- attrname }}="{{ attrname }}"
+        {%- elseif attrvalue is not sameas(false) -%}
+            {{- attrname }}="{{ attrvalue }}"
+        {%- endif -%}
+    {%- endfor -%}
+{%- endblock widget_attributes -%}
+
+
+
+{%- block button_attributes -%}
+    id="{{ id }}" name="{{ full_name }}"{% if disabled %} disabled="disabled"{% endif -%}
+    {#ngClick#}
+    ng-click="submit(user)" 
+    
+    {%- for attrname, attrvalue in attr -%}
+        {{- " " -}}
+        {%- if attrname in ['placeholder', 'title'] -%}
+            {{- attrname }}="{{ attrvalue|trans({}, translation_domain) }}"
+        {%- elseif attrvalue is sameas(true) -%}
+            {{- attrname }}="{{ attrname }}"
+        {%- elseif attrvalue is not sameas(false) -%}
+            {{- attrname }}="{{ attrvalue }}"
+        {%- endif -%}
+    {%- endfor -%}
+{%- endblock button_attributes -%}
