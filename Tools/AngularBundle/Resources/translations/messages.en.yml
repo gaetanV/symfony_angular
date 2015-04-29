@@ -1,0 +1,3 @@
+test:
+    regex:  Error Regex   EN
+    min:  Error min  {{ limit }} EN

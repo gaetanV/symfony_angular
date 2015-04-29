@@ -14,21 +14,19 @@
          
            {% if  validator=="NotBlank" %}
                      {% set constraint = constraints[0]%}
-                        
-                           <span ng-show="{{formName}}['{{ full_name }}'].$error.required">{{constraint.message |trans}}</span>
-    
+                           <span ng-show="{{formName}}['{{ full_name }}'].$error.required">{{constraint.message }}</span>
            {% endif %}
           
            {% if  validator=="Length" %}
                      {% set constraint = constraints[0]%}
-                   <span ng-show="{{formName}}['{{ full_name }}'].$error.minlength">{{constraint.minMessage |trans}}</span>
-                   <span ng-show="{{formName}}['{{ full_name }}'].$error.maxlength">{{constraint.maxMessage |trans}}</span>
+                   <span ng-show="{{formName}}['{{ full_name }}'].$error.minlength">{{constraint.minMessage  }}</span>
+                   <span ng-show="{{formName}}['{{ full_name }}'].$error.maxlength">{{constraint.maxMessage }}</span>
            {% endif %}
               
-           
+         
            {% if  validator=="Regex" %}
                      {% for constraint in constraints %}
-                           <span ng-show="{{formName}}['{{ full_name }}'].$error.regex{{loop.index}}">{{constraint.message |trans}}</span>
+                           <span ng-show="{{formName}}['{{ full_name }}'].$error.regex{{loop.index}}">{{constraint.message }}</span>
                      {% endfor%}
                 
             {% endif %}
@@ -48,6 +46,7 @@
 
 
 {%- block form_start -%}
+
     {% set method = method|upper %}
     {%- if method in ["GET", "POST"] -%}
         {% set form_method = method %}

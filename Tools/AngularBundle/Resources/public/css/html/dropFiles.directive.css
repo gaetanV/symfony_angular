@@ -1,0 +1,38 @@
+    .drop-file-hidden{
+            height:200px;
+            width:200px; 
+            overflow:hidden;
+            background:#ddd;
+            min-height: 100px;
+             position: absolute;
+             opacity:0;
+        }
+        
+        .drop-file {
+             height:200px;
+             width:200px; 
+             background:#eee;
+             border:#000 dashed 1px;
+            
+        }
+   
+        .drop-files li{
+               height:100px;
+                 width:100px;  
+               overflow:hidden;
+             list-style: none;
+             border:#ddd solid 1px;
+             margin: 5px;
+             float:left;
+                
+        }
+
+   
+        
+        .drop-files .h{
+             height:100%;  
+           
+        }
+      .drop-files .v{
+           width:100%;  
+        }
