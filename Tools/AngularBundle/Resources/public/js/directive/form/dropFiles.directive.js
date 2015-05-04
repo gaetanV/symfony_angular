@@ -8,11 +8,15 @@
    ngDropFile.$inject = ['$compile'];
     function ngDropFile($compile) {
            var link = function ($scope, $element, $attrs, $controller) {
-
+     
             $element.addClass("drop-file-hidden");
+            
 
             var ngDropFile = $scope.ngDropFile = [];
-
+       
+          
+           
+              
             $scope.removeFile = function ($index) {
                 ngDropFile.splice($index, 1);
             }
@@ -26,6 +30,7 @@
 
                 var reader = new FileReader();
                 reader.onload = function (e) {
+                    console.log(e);
                     var image = new Image();
                     image.src = e.target.result;
                     image.onload = function () {
@@ -33,9 +38,11 @@
                         aFile.size = file.size;
                         aFile.image = e.target.result;
                         aFile.name = file.name;
+                        aFile.type=file.type;
                         aFile.format = image.width > image.height ? "h" : "v";
                         var callback = function () {
-                            ngDropFile.unshift(aFile);
+                                 $controller.$setViewValue({tmp_file:aFile});
+                                  ngDropFile.unshift(aFile);
                         }
 
                         $scope.$apply(callback);
@@ -49,7 +56,6 @@
             };
 
             var processFiles = function (filelist) {
-
                 if (!filelist || !filelist.length)
                     return;
                 for (var i = 0; i < filelist.length; i++) {
@@ -67,13 +73,9 @@
                 e.preventDefault();
             };
             var handleChange = function (e) {
-
                 processFiles(e.currentTarget.files);
-
             };
-
-
-            var dropFile = document.getElementById($attrs.ngDropFile);
+         
             document.addEventListener('drop', block, false);
             document.addEventListener('dragover', block, false);
 
@@ -84,6 +86,7 @@
         }
         return {
             restrict: 'A',
+             require: "ngModel",
             link: link,
         };
     }

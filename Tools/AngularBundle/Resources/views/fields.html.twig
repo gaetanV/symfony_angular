@@ -2,29 +2,52 @@
 {# We redefine form elements, so they are binded with Angular model #}
 {% extends "form_div_layout.html.twig" %}
 
+{%- block form_widget_simple -%}
+    {%- set type = type|default('text') -%}
+    <input type="{{ type }}"  {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+{%- endblock form_widget_simple -%}
+
+
 {%- block form_row -%}
     <div>      
         {{- form_label(form) -}}
         {{- form_widget(form) -}}
         {#validator  <!--  {{- form_errors(form) -}} -->  #}  
         {% for validator in form.constraints|keys %}
-                 {#TO DO FORM NAME #} 
-            {% set formName = "form"%}
+            
+           {% set value_name =full_name|replace({']': "", '[': "."}) %}
+            {% set formName =  name["form"]%}
+          
            {% set constraints = form.constraints[validator]%}
-         
+            
+       
+           <div ng-show="{{formName}}.$submitted && {{formName}}['{{ full_name }}'].$pending.required || {{formName}}['{{ full_name }}'].$touched">
+       
+            {% if  validator=="Image" %}
+                     {% set constraint = constraints[0]%}
+                      {{ constraint.mimeTypesMessage}}
+                     {{ constraint.maxSizeMessage}}
+                    {{dump(constraint)}}
+                         
+           {% endif %}
+               
+               
            {% if  validator=="NotBlank" %}
                      {% set constraint = constraints[0]%}
+                     
                            <span ng-show="{{formName}}['{{ full_name }}'].$error.required">{{constraint.message }}</span>
            {% endif %}
           
            {% if  validator=="Length" %}
                      {% set constraint = constraints[0]%}
+                
                    <span ng-show="{{formName}}['{{ full_name }}'].$error.minlength">{{constraint.minMessage  }}</span>
                    <span ng-show="{{formName}}['{{ full_name }}'].$error.maxlength">{{constraint.maxMessage }}</span>
            {% endif %}
               
          
            {% if  validator=="Regex" %}
+              
                      {% for constraint in constraints %}
                            <span ng-show="{{formName}}['{{ full_name }}'].$error.regex{{loop.index}}">{{constraint.message }}</span>
                      {% endfor%}
@@ -32,11 +55,14 @@
             {% endif %}
             
             {% if  validator=="Match" %}
-                  {% set constraint = constraints[0]%}
-                              <span ng-show="{{formName}}['{{ full_name }}'].$error.match && {{formName}}['{{formName}}{{ constraint.match }}'].$valid || {{formName}}['{{ full_name }}'].$error.required &&  {{formName}}['{{ constraint.match }}'].$valid ">{{ constraint.message |trans }}</span>   
-            {% endif %}
             
-   
+                  {% set constraint = constraints[0]%}
+                            {% set constraintNgModel = constraint.match.name.ngmodel%}
+                          {% set constraintFullName = constraint.match.full_name%}
+                       <span ng-show="{{formName}}['{{ full_name }}'].$error.match && {{formName}}['{{constraintFullName}}'].$valid || {{formName}}['{{ full_name }}'].$error.required &&  {{formName}}['{{ constraintFullName }}'].$valid ">{{ constraint.message }}</span>   
+           {% endif %}
+           </div>
+       
         {% endfor %}
         
         
@@ -44,41 +70,47 @@
 {%- endblock form_row -%}
 
 
-
 {%- block form_start -%}
-
     {% set method = method|upper %}
     {%- if method in ["GET", "POST"] -%}
         {% set form_method = method %}
     {%- else -%}
         {% set form_method = "POST" %}
     {%- endif -%}
-    <form name="{{ name }}" method="{{ form_method|lower }}" action="{{ action }}"{% for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}{% if multipart %} enctype="multipart/form-data"{% endif %}>
+    <form name="{{ name }}" 
+        {#novalidate#}
+           {#ngClick#}
+            ng-submit="submit($event)" 
+          method="{{ form_method|lower }}" action="{{ action }}"{% for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}{% if multipart %} enctype="multipart/form-data"{% endif %}>
     {%- if form_method != method -%}
         <input type="hidden" name="_method" value="{{ method }}" />
     {%- endif -%}
 {%- endblock form_start -%}
 
-{%- block form_end -%}
-    {%- if not render_rest is defined or render_rest -%}
-        {{ form_rest(form) }}
-    {%- endif -%}
-    </form>
-{%- endblock form_end -%}
-
 {%- block widget_attributes -%}
     id="{{ id }}" name="{{ full_name }}"
     
+       
+            {% set formName = name["form"]%}
+            {% set formData = [formName,'_data']|join%}
+     
      {#ngModel#}
-     ng-model="data['{{ full_name }}']"
-       {#TO DO FORM NAME #} 
-            {% set formName = "form"%}
-          {#TO DO CHANGER DATA PAR DATA FORM NAME #} 
+     ng-model={{name["ngmodel"]}}
+      init-value
+    {# ng-init="{{name["ngmodel"]}}='{{value}}'"#}
   
          {% for validator in form.constraints|keys %}
               
            {% set constraints = form.constraints[validator]%}
            
+              {% if  validator=="Image" %}
+                   {% set constraint = constraints[0]%}
+                    ng-drop-file="{
+                            maxsize:'{{constraint.maxSize}}',
+                            mimeTypes:'[{{constraint.mimeTypes|join(',')}}]'
+                    }"
+               {% endif %}
+               
            {% if  validator=="Length" %} 
                {% set constraint = constraints[0]%}
                ng-minlength="{{constraint.min}}" ng-maxlength="{{constraint.max}}"
@@ -88,9 +120,11 @@
            {% endif %}
            {% if  validator=="Match" %}
                   {% set constraint = constraints[0]%}
-                          match-field="data['{{formName}}{{constraint.match}}']" required="" ng-disabled="!{{formName}}['{{formName}}{{constraint.match}}'].$valid"
-            {% endif %}
-           
+                           {% set constraintNgModel = constraint.match.name.ngmodel%}
+                          {% set constraintFullName = constraint.match.full_name%}
+                         match-field="{{constraintNgModel}}" required="" ng-disabled="!{{formName}}['{{constraintFullName}}'].$valid"
+            }{% endif %}
+         
         {% endfor %}
      
     {%- if read_only %} readonly="readonly"{% endif -%}
@@ -108,21 +142,43 @@
     {%- endfor -%}
 {%- endblock widget_attributes -%}
 
+{%- block button_widget -%}
+    {%- if label is empty -%}
+        {%- if label_format is not empty -%}
+            {% set label = label_format|replace({
+                '%name%': name["object"],
+                '%id%': id,
+            }) %}
+        {%- else -%}
 
-
-{%- block button_attributes -%}
-    id="{{ id }}" name="{{ full_name }}"{% if disabled %} disabled="disabled"{% endif -%}
-    {#ngClick#}
-    ng-click="submit(user)" 
-    
-    {%- for attrname, attrvalue in attr -%}
-        {{- " " -}}
-        {%- if attrname in ['placeholder', 'title'] -%}
-            {{- attrname }}="{{ attrvalue|trans({}, translation_domain) }}"
-        {%- elseif attrvalue is sameas(true) -%}
-            {{- attrname }}="{{ attrname }}"
-        {%- elseif attrvalue is not sameas(false) -%}
-            {{- attrname }}="{{ attrvalue }}"
+        {% set label = name["object"]|humanize %}
         {%- endif -%}
-    {%- endfor -%}
-{%- endblock button_attributes -%}
+    {%- endif -%}
+    <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>{{ label|trans({}, translation_domain) }}</button>
+{%- endblock button_widget -%}
+
+
+
+{%- block form_label -%}
+    {% if label is not sameas(false) -%}
+        {% if not compound -%}
+            {% set label_attr = label_attr|merge({'for': id}) %}
+        {%- endif %}
+        {% if required -%}
+            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
+        {%- endif %}
+        {% if label is empty -%}
+                 {%- if label_format is not empty -%}
+            {% set label = label_format|replace({
+                '%name%': name["object"],
+                '%id%': id,
+            }) %}
+        {%- else -%}
+
+        {% set label = name["object"]|humanize %}
+            {%- endif -%}
+        {%- endif -%}
+        <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|trans({}, translation_domain) }}</label>
+    {%- endif -%}
+{%- endblock form_label -%}
+
