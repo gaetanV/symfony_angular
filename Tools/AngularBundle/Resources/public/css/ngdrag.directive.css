@@ -1,0 +1,27 @@
+.ng-drop{
+    //border:#000 dashed 2px;
+}
+.ng-drop-active{
+
+}
+.ng-drop-active::after {
+    display: block;
+    margin:10px 0;
+    margin-left: 20px;
+    background:#f8f8f8;
+  
+ 
+    content: "+";
+    text-align: center;
+  
+        
+}
+.ng-drag{
+    color:#ddd;
+}
+.ng-drag + *{
+    color:#ddd;
+}
+.ng-drop-error{
+    background:none;
+}

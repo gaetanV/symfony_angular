@@ -12,6 +12,7 @@
 
  /**
  * @syntax  ng-drop-file 
+ * @exemple ng-drop-file="{ maxsize:'77000', mimeTypes:["image\/jpeg","image\/png"] }" 
  * @dom input
  * @require ngModel
  * @param {Json} 
