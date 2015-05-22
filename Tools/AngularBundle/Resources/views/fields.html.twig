@@ -2,17 +2,25 @@
 {# We redefine form elements, so they are binded with Angular model #}
 {% extends "form_div_layout.html.twig" %}
 
-{%- block form_row -%}
+
+    {% block optionType_widget %}
+        
  
-    <div  {% if "ng-repeat" in form.parent.vars.attr|keys %}ng-repeat="{{form.parent.vars.attr["ng-repeat"]}}"{% endif %}{% if "ng-init" in form.parent.vars.attr|keys %}ng-init="{{form.parent.vars.attr["ng-init"]}}" {% endif %}> 
+                <select  {{ block('widget_attributes') }} multiple  children-option="id as name in {{ngList}} track by children" multiple>
+               
+           
+                   </select>
+            
+{% endblock %}
+
+{%- block form_row -%}
+
+    <div > 
         {{- form_label(form) -}}
         {{- form_widget(form) -}}
      
         {% for validator in form.constraints|keys %}
-            
-           {% set value_name =full_name|replace({']': "", '[': "."}) %}
-            {% set formName =  form.vars["form_name"]%}
-          
+           {% set formName =  form.vars["form_name"]%}
            {% set constraints = form.constraints[validator]%}
     
          

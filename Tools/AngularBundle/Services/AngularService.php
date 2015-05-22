@@ -86,21 +86,31 @@ class AngularService extends ContainerAware {
             if (!isset($value->constraints))
                 $value->constraints = array();
             $metadata = $metadataForm;
-
+     
             /**
              * @Constraint: new meta data ( object:entity | form )
              */
             if (is_object($value->vars["value"])) {
                 $ref_object = new \ReflectionClass($value->vars["value"]);
                 $objectClass = $ref_object->getShortName();
+  
+                
                 if ($objectClass === "ArrayCollection")
-                    $this->arrayCollectionToRepeat($value);
-                $validator = $this->container->get('validator');
-                $metadata = $validator->getMetadataFor($value->vars["value"]);
+                    
+              
+                             $this->arrayCollectionToRepeat($value);
+                             $validator = $this->container->get('validator');
+                             $metadata = $validator->getMetadataFor($value->vars["value"]);
 
-                if (count($value->children) > 0)
-                    $this->getProperty($value, $metadata, $form);
-                continue;
+                            if (count($value->children) > 0)
+                                $this->getProperty($value, $metadata, $form);
+                            continue;
+                     
+                       /*   $config = $form->offsetGet($key)->getConfig();
+                      
+                
+                         */
+                     
             }else {
                 
             }
@@ -129,9 +139,8 @@ class AngularService extends ContainerAware {
             /* OFFSET FORM */
             if ($form->offsetExists($key)) {
                 $config = $form->offsetGet($key)->getConfig();
-                $functionType = new \ReflectionClass($config->getType()->getInnerType());
-                $type = $functionType->getShortName();
-
+                $type=$config->getType()->getInnerType();
+                
                 /* COLLECTION    if($type==="CollectionType"){} /*
 
                   $option = $config->getAttribute("data_collector/passed_options");
@@ -145,8 +154,11 @@ class AngularService extends ContainerAware {
                   $this->getProperty($formView, $propertyMetadataCollection, $form);
                   $value->type=$formView;
                  */
-                /* MATCH */
-                if ($type === "RepeatedType") {
+    
+                 if ($type instanceof \Tools\AngularBundle\Form\optionType) $value->vars["ngList"] = self::fullNameToNgModel($value->vars["full_name"],$value->vars["ngList"]); 
+              
+                 /* MATCH */
+                 if ($type instanceof \Symfony\Component\Form\Extension\Core\Type\RepeatedType){        
                     $option = $config->getAttribute("data_collector/passed_options");
                     $error = $option["invalid_message"];
                     foreach ($value->children as $keyChild => $valueChild) {
@@ -190,28 +202,33 @@ class AngularService extends ContainerAware {
           $value->vars["attr"]["ng-init"] =$init;
          */
         if (array_key_exists("ng-repeat", $value->vars["attr"])) {
-            $child = $value->children[0];
 
-            $name = self::fullNameToNgModel($value->vars["full_name"]);
-            $repeat = "item";
-            $value->vars["attr"]["ng-repeat"] = "$repeat in $name";
-            /**
-             * @warning need a id on object
-             */
-            foreach ($child as $childDepth) {
+            if(array_key_exists(0,$value->children)){
+                        $child = $value->children[0];
 
-                $model = str_replace($value->vars["full_name"] . "[0]", $repeat, $childDepth->vars["full_name"]);
-                ;
-                $childDepth->vars["attr"]["ng-model"] = str_replace(array("]", "["), array("", "."), $model);
+                        $name = self::fullNameToNgModel($value->vars["full_name"]);
+                        $repeat = "item";
+                        $value->vars["attr"]["ng-repeat"] = "(key, $repeat) in $name";
+                        /**
+                         * @warning need a id on object
+                         */
+                        foreach ($child as $childDepth) {
 
-                /* TO DO  (name ect...)
-                  $pattern = "/^" . str_replace(array("]", "["), array("\]", "\["), $value->vars["full_name"]) . "\[(\d)\]/";
-                  $pattern = "/^" . str_replace(array("]", "["), array("\]", "\["), $value->vars["id"]) . "_(\d)_/";
-                  $childDepth->vars["id"] = preg_replace($pattern, $value->vars["id"] . "_{{" . $repeat . ".id}}_", $childDepth->vars["id"]);
-                  $childDepth->vars["full_name"] = preg_replace($pattern, $value->vars["id"] . "_{{" . $repeat . ".id}}_", $childDepth->vars["full_name"]);
-                 */
+                             $model = str_replace($value->vars["full_name"] . "[0]", $repeat, $childDepth->vars["full_name"]);
+
+                             $childDepth->vars["attr"]["ng-model"] = str_replace(array("]", "["), array("", "."), $model);
+
+                              $pattern = "/^" . str_replace(array("]", "["), array("\]", "\["), $value->vars["full_name"]) . "\[(\d)\]/";
+                              $childDepth->vars["full_name"] = preg_replace($pattern, $value->vars["full_name"] . "[{{key}}]", $childDepth->vars["full_name"]);
+
+                              $pattern = "/^" . str_replace(array("]", "["), array("\]", "\["), $value->vars["id"]) . "_(\d)_/";
+                              $childDepth->vars["id"] = preg_replace($pattern, $value->vars["id"] . "_{{key}}_", $childDepth->vars["id"]);
+
+                        }
+                        $value->children = array($child);
+            }else{
+                unset( $value->vars["attr"]["ng-repeat"]); 
             }
-            $value->children = array($child);
         }
     }
 
@@ -261,9 +278,9 @@ class AngularService extends ContainerAware {
         }
     }
 
-    static function fullNameToNgModel($fullname) {
+    static function fullNameToNgModel($fullname,$base="data") {
         $fullname = str_replace("[]", " ", $fullname);
-        $ngmodel = "data." . str_replace(array("]", "["), array("", "."), $fullname);
+        $ngmodel = "$base." . str_replace(array("]", "["), array("", "."), $fullname);
         $pattern = "/(\.\d+\.|\.\d+$|{{i}})/";
         preg_match_all($pattern, $ngmodel, $matches);
         foreach ($matches[0] as $key => $value) {
