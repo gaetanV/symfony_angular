@@ -1,4 +1,4 @@
-    .drop-file-hidden{
+body    .drop-file-hidden{
             height:200px;
             width:200px; 
             overflow:hidden;
@@ -8,7 +8,7 @@
              opacity:0;
         }
         
-        .drop-file {
+      body   .drop-file {
              height:200px;
              width:200px; 
              background:#eee;
@@ -16,7 +16,7 @@
             
         }
    
-        .drop-files li{
+  body       .drop-files li{
                height:100px;
                  width:100px;  
                overflow:hidden;
@@ -29,10 +29,10 @@
 
    
         
-        .drop-files .h{
+     body    .drop-files .h{
              height:100%;  
            
         }
-      .drop-files .v{
+  body     .drop-files .v{
            width:100%;  
         }

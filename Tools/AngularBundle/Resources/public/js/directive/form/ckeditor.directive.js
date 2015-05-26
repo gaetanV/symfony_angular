@@ -47,7 +47,7 @@
                     });
                 });
 
-               /*To do on value change performance
+               /*To do on value change performance // submit
                 * ck.updateElement();
                         for (instance in CKEDITOR.instances) {
                 CKEDITOR.instances[instance].updateElement();
