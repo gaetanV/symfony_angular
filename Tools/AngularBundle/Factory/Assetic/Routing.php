@@ -1,6 +1,6 @@
 <?php
 
-namespace Tools\AngularBundle\Assetic;
+namespace Tools\AngularBundle\Factory\Assetic;
 
 use Assetic\Asset\AssetInterface;
 use Assetic\Filter\FilterInterface;

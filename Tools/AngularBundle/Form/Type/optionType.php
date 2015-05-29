@@ -1,5 +1,5 @@
 <?php
-namespace Tools\AngularBundle\Form;
+namespace Tools\AngularBundle\Form\type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

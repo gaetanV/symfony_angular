@@ -1,26 +1,30 @@
 <?php
+
 namespace Tools\AngularBundle\Factory;
 
 use Symfony\Component\Yaml\Yaml;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Assetic\Factory\AssetFactory;
 use Assetic\FilterManager;
 use Assetic\AssetWriter;
 
 class ModuleManager {
+
     private $appName;
     private $modules = array();
     private $route;
 
-    public function __construct(\Symfony\Bundle\FrameworkBundle\Routing\Router $route,$appName="app") {
+    public function __construct($appName = "app") {
         global $kernel;
-        $rootDir=dirname($kernel->getRootDir());
-        
-        $this->appName=$appName;
-        // $route=new \Symfony\Bundle\FrameworkBundle\Routing\Router(new  \Symfony\Component\DependencyInjection\Container(), "");
-        $this->route = $route;
-        $this->appPath= join(DIRECTORY_SEPARATOR, array($rootDir, "/web/$this->appName/"));
-       
-        $this->bundlePath= join(DIRECTORY_SEPARATOR, array($rootDir, "/src/"));
+        $rootDir = dirname($kernel->getRootDir());
+        $this->appName = $appName;
+
+        $this->route = new Router(new Container(), "");
+        $this->appPath = join(DIRECTORY_SEPARATOR, array($rootDir, "/web/$this->appName/"));
+
+        $this->bundlePath = join(DIRECTORY_SEPARATOR, array($rootDir, "/src/"));
         $this->twig = new \Twig_Environment(new \Twig_Loader_String());
     }
 
@@ -32,7 +36,7 @@ class ModuleManager {
      * @throws \Exception (Unable to find config repertory)
      */
     public function addBundle($value) {
-        $location =  $this->bundlePath . $value . "/Angular";
+        $location = $this->bundlePath . $value . "/Angular";
         $configSrc = $location . "/config.yml";
 
         if (!file_exists($configSrc)) {
@@ -60,24 +64,39 @@ class ModuleManager {
         return Yaml::parse(file_get_contents($configSrc));
     }
 
-    private function complieRoute() { 
+    private function complieRoute() {
         $routeCollection = new \Symfony\Component\Routing\RouteCollection();
         foreach ($this->modules as $key => $module) {
-           
-             $YML= $this->getModuleRoute($module);
-              foreach ($YML as $key => $r) {
-                        $routeCollection->add($key, new \Symfony\Component\Routing\Route($this->appName.$r["defaults"]["angular"]["templateUrl"], array("param" => $r["defaults"]["angular"])));
-               }
+
+            $YML = $this->getModuleRoute($module);
+            foreach ($YML as $key => $r) {
+                $route = $r["defaults"]["angular"];
+
+                if (is_string($route["template"])){
+                    $route["template"]=$module["location"] . $route["template"];
+                }
+                else
+                    $route["template"]["url"] = $module["location"] . $route["template"]["url"];
+
+                    $route["bundlePath"]=$this->bundlePath;
+
+                $routeCollection->add($key, new \Symfony\Component\Routing\Route($this->appName . $r["defaults"]["angular"]["templateUrl"], array("param" => $route)));
+            }
         }
         return $routeCollection;
-       
+    }
+
+    public function matchResponse($url) {
+        $routeAngular = $this->match($url);
+        $controller = new ModuleController();
+        return $controller->buildView($routeAngular);
     }
 
     public function match($url) {
-         $routeCollection= $this->complieRoute();
-         $matcher = new \Symfony\Component\Routing\Matcher\UrlMatcher($routeCollection, $this->route->getContext());
-
-        $route = $matcher->match("/$this->appName/" . $url);
+        $routeCollection = $this->complieRoute();
+        $matcher = new UrlMatcher($routeCollection, $this->route->getContext());
+        $routeAngular = $matcher->match("/$this->appName/" . $url);
+        return $routeAngular["param"];
     }
 
     public function compileJavascript() {
@@ -85,11 +104,11 @@ class ModuleManager {
         $path = "js/";
         $fileName = "angular_module";
 
-    
+
         $factory = new AssetFactory($this->bundlePath);
 
         $fm = new FilterManager;
-        $route = new \Tools\AngularBundle\Assetic\Routing($this->route);
+        $route = new Assetic\Routing($this->route);
         $fm->set('ROUTE', $route);
         $factory->setFilterManager($fm);
 
@@ -101,7 +120,7 @@ class ModuleManager {
         $collection = new \Assetic\Asset\AssetCollection();
         $collection->setTargetPath("js/angular_module.js");
         $route = new \Assetic\Asset\StringAsset(
-                $this->twig->render(file_get_contents(dirname(__FILE__) . "/views/directive.js"), array("date" => date("Y-m-d H:i:s"), "version" => 0.1))
+                $this->twig->render(file_get_contents(dirname(__FILE__) . "/Views/directive.js"), array("date" => date("Y-m-d H:i:s"), "version" => 0.1))
         );
         $collection->add($route);
         $input = array();
@@ -130,9 +149,9 @@ class ModuleManager {
             }
         }
         $writer = new AssetWriter($this->appPath);
-        
+
         $writer->writeAsset($collection);
-        return $this->appName ."/js/". $fileName . ".js";
+        return $this->appName . "/js/" . $fileName . ".js";
     }
 
     /**
@@ -145,14 +164,12 @@ class ModuleManager {
         $routes = $this->getModuleRoute($module);
 
         $route = new \Assetic\Asset\StringAsset(
-                $this->twig->render(file_get_contents(dirname(__FILE__) . "/views/route.js"), array(
+                $this->twig->render(file_get_contents(dirname(__FILE__) . "/Views/route.js"), array(
                     "date" => date("Y-m-d H:i:s"),
                     "version" => 0.1,
                     "namespace" => $module["namespace"],
                     "name" => $name,
-                    "routes"=>$routes,
-                  
-                    
+                    "routes" => $routes,
                 ))
         );
         return $route;
