@@ -38,7 +38,6 @@ class ModuleController extends Controller {
                                 $form = new $param["form"]();
                                 $form = $this->createForm($form, $entity);
                                 $formView = new \Tools\AngularBundle\Form\AngularForm($form);
-
                                 $parms[$name] = $formView->createView();
                                 break;
                         }

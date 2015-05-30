@@ -8,19 +8,20 @@ use Symfony\Component\Routing\Route;
 class Module {
     /* Construct */
 
-    public $location;
-    public $outLocation;
+    private $location;
+    private $outLocation;
 
     /* YAML */
-    public $namespace;
-    public $version = 1;
-    public $js = array();
-    public $route_location = "route.yml";
+    private $namespace;
+    private $menu = array();
+    private $version = 1;
+    private $js = array();
+    private $route_location = "route.yml";
 
     /* Cache */
-    public $route;
-    public $routeArray= array();
- 
+    private $route;
+    private $routeArray = array();
+
     public function __construct($location, $outLocation) {
         $this->outLocation = $outLocation;
         $this->location = $location;
@@ -39,6 +40,11 @@ class Module {
             throw new \Exception("Unable to construct Angular Module namespace not found  ");
             return false;
         }
+        if (array_key_exists("menu", $YML)) {
+            if (is_array($YML["menu"]))
+                $this->menu = $YML["menu"];
+        }
+
         if (array_key_exists("js", $YML)) {
             if (is_array($YML["js"])) {
                 foreach ($YML["js"] as $path) {
@@ -63,21 +69,25 @@ class Module {
         }
         $YML = Yaml::parse(file_get_contents($configSrc));
         foreach ($YML as $key => $route) {
-             $this->routeArray[$key]=$route;
-             
+            $this->routeArray[$key] = $route;
+          
             if (array_key_exists("defaults", $route)) {
+      
+                
                 if (array_key_exists("angular", $route["defaults"])) {
                     $param = $route["defaults"]["angular"];
+                    
+                     if (array_key_exists("path", $route)) {
+                            $param["path"]=$route["path"];
+                     }
+                    
                     if (array_key_exists("templateUrl", $route["defaults"]["angular"])) {
                         $templateUrl = $route["defaults"]["angular"]["templateUrl"];
-
 
                         if (is_string($param["template"])) {
                             $param["template"] = $this->location . $param["template"];
                         } else
                             $param["template"]["url"] = $this->location . $param["template"]["url"];
-                        
-                        
                     }else {
                         throw new \Exception("Unable to load Route defaults angular templateUrl not found");
                         return;
@@ -91,42 +101,48 @@ class Module {
                 return;
             }
 
-       
-         $this->route[$key]= new Route($this->outLocation . $templateUrl, array("param" => $param));
-         
-                
-    
+
+            $this->route[$key] = new Route($this->outLocation . $templateUrl, $param);
         }
 
         return $this->route;
     }
 
-    public function getJs() {
-        return $this->js;
-    }
-
     public function buildAsseticRoute() {
-        $this->getRoute();
-        $routes = $this->routeArray;
-   
-        $pattern = "/[{]([^}\/]*)(}|$|\/)/";
-        $replacement = ':${1}';
-
-        foreach ($routes as $key => $route) {
-            $routes[$key]["path"] = preg_replace($pattern, $replacement, $route["path"]);
+        $angularRoute=array();
+        $routes=$this->getRoute();
+        foreach($routes as $key=> $route){
+            $angular=$route->getDefaults();
+             $pattern = "/[{]([^}\/]*)(}|$|\/)/";
+               $replacement = ':${1}';
+            $angularRoute[$key]["path"]=preg_replace($pattern, $replacement,  $angular["path"]); 
+            $angularRoute[$key]["templateUrl"]=$angular["templateUrl"];
+             $angularRoute[$key]["controller"]=$angular["controller"];
         }
 
         $route = new \Assetic\Asset\StringAsset(
                 $this->twig->render(file_get_contents(dirname(__FILE__) . "/Views/route.js"), array(
-                    "date" => date("Y-m-d H:i:s"),
+
                     "version" => $this->version,
                     "namespace" => $this->namespace,
-                    "routes" => $routes,
+                    "routes" => $angularRoute,
                 ))
         );
         return $route;
     }
 
+    /* Getters */
+
+    public function getJs() {
+        return $this->js;
+    }
+
+    public function getNamespace() {
+        return $this->namespace;
+    }
+    public function getMenu() {
+           return $this->menu;
+     }
 }
 
 ?>

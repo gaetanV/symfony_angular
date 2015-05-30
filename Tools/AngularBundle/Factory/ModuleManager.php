@@ -37,9 +37,30 @@ class ModuleManager {
         return true;
     }
 
-    public function getMenuCollection($name) {
+    public function getMenuCollection() {
         $menuCollection = array();
-
+        foreach ($this->modules as $module) {
+                       $routeCollection = $this->complieRoute();
+                    $arrayTmp=array();
+                    foreach($module->getMenu() as $menuGroupe=> $path){
+                        $arrayTmp[$menuGroupe]=array();
+                   
+                         foreach ($path as $index=>$name){
+                                     $tmpRoute= new \stdClass();
+                                     $tmpRoute->name=$name;
+                                      $route= $routeCollection->get($index);
+                                      $defaults= $route->getDefaults();
+                          
+                                     $tmpRoute->path="#".$defaults["path"];
+                                     array_push($arrayTmp[$menuGroupe],$tmpRoute);
+                         }
+                      
+                    }
+  
+                    
+                  $menuCollection=  array_merge($arrayTmp,$menuCollection);
+          }
+      
         return $menuCollection;
     }
 
@@ -70,6 +91,9 @@ class ModuleManager {
     }
 
     public function compileJavascript() {
+        
+   
+        
         $path = "js/";
         $fileName = $this->appName . ".modules";
         $factory = new AssetFactory($this->bundlePath);
@@ -86,9 +110,20 @@ class ModuleManager {
 
         $collection = new \Assetic\Asset\AssetCollection();
         $collection->setTargetPath($path . $fileName . ".js");
-
+        
+        $modules=array();
+        foreach ($this->modules as $name => $module) {
+            array_push($modules,$module->getNamespace());
+            
+        }
+        $app = new \Assetic\Asset\StringAsset(
+                $this->twig->render(file_get_contents(dirname(__FILE__) . "/Views/app.js"), array("appName" =>$this->appName, "modules" =>$modules, "date" => date("Y-m-d H:i:s")))
+        );
+          $collection->add($app);
+        
+        
         $route = new \Assetic\Asset\StringAsset(
-                $this->twig->render(file_get_contents(dirname(__FILE__) . "/Views/directive.js"), array("date" => date("Y-m-d H:i:s"), "version" => 0.1))
+                $this->twig->render(file_get_contents(dirname(__FILE__) . "/Views/directive.js"), array( "version" => 0.1))
         );
         $collection->add($route);
         $input = array();
@@ -101,10 +136,7 @@ class ModuleManager {
         foreach ($this->modules as $name => $module) {
             $input = array();
             $filter = array("ROUTE");
-
-            if (!array_key_exists("js", $module)) {
-                throw new \Exception("Unable to find config js in module $key");
-            }
+            
             $collection->add($module->buildAsseticRoute());
             foreach ($module->getJs() as $key => $path) {
                 array_push($input, $path);

@@ -3,12 +3,11 @@
 *  @GenerateBy angular symfony  : https://github.com/gaetanV/symfony_angular
 *  @Module: {{namespace}} 
 *  @Version :  {{version}}
-*  @Build: {{date}}  
 */
-
-(function () {
+(function() {
     'use strict';
-
+     angular.module('{{namespace}}', []);
+    
     angular
             .module("{{namespace}}")
             .config(route);
@@ -19,8 +18,8 @@
         $routeProvider
         {% for route in routes %}
                 .when("{{route['path']}}", {
-                    templateUrl: '{{route["defaults"]["angular"]["templateUrl"]}}',
-                    controller: '{{route["defaults"]["angular"]["controller"]}}'
+                    templateUrl: '{{route["templateUrl"]}}',
+                    controller: '{{route["controller"]}}'
                 })
         {% endfor %}
     }
