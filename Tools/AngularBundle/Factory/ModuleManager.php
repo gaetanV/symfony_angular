@@ -6,6 +6,7 @@ use Symfony\Component\Yaml\Yaml;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\RouteCollection;
 use Assetic\Factory\AssetFactory;
 use Assetic\FilterManager;
 use Assetic\AssetWriter;
@@ -19,68 +20,37 @@ class ModuleManager {
     public function __construct($appName = "app") {
         global $kernel;
         $rootDir = dirname($kernel->getRootDir());
-        $this->appName = $appName;
-
         $this->route = new Router(new Container(), "");
-        $this->appPath = join(DIRECTORY_SEPARATOR, array($rootDir, "/web/$this->appName/"));
-
-        $this->bundlePath = join(DIRECTORY_SEPARATOR, array($rootDir, "/src/"));
         $this->twig = new \Twig_Environment(new \Twig_Loader_String());
+
+        $this->webPath = join(DIRECTORY_SEPARATOR, array($rootDir, "/web/"));
+        $this->bundlePath = join(DIRECTORY_SEPARATOR, array($rootDir, "/src/"));
+        $this->appName = $appName;
+        $this->appPath = join(DIRECTORY_SEPARATOR, array($this->webPath, $this->appName));
     }
 
-    /**
-     * 
-     * @param {string} $value
-     * @return {boolean}
-     * @throws \Symfony\Component\Routing\Exception\ResourceNotFoundException 
-     * @throws \Exception (Unable to find config repertory)
-     */
-    public function addBundle($value) {
-        $location = $this->bundlePath . $value . "/Angular";
-        $configSrc = $location . "/config.yml";
+    public function addModule($value) {
+        $location = $this->bundlePath . $value . "\/";
 
-        if (!file_exists($configSrc)) {
-            throw new \Symfony\Component\Routing\Exception\ResourceNotFoundException("Unable to construct Angular Module $configSrc not found  ");
-            return false;
-        }
-        $YML = Yaml::parse(file_get_contents($configSrc));
-        foreach ($YML as $key => $module) {
-
-
-            if (!array_key_exists("repertory", $module)) {
-                throw new \Exception("Unable to find config repertory in module $key");
-            }
-            $module["location"] = $location . $module["repertory"];
-            $this->modules[$key] = $module;
-        }
+        $module = new Module($location, $this->appName);
+        array_push($this->modules, $module);
         return true;
     }
 
-    private function getModuleRoute($module) {
-        $configSrc = $module["location"] . "/route.yml";
-        if (!file_exists($configSrc)) {
-            throw new \Symfony\Component\Routing\Exception\ResourceNotFoundException("Unable to load Module , route : $configSrc not found");
-        }
-        return Yaml::parse(file_get_contents($configSrc));
+    public function getMenuCollection($name) {
+        $menuCollection = array();
+
+        return $menuCollection;
     }
 
     private function complieRoute() {
-        $routeCollection = new \Symfony\Component\Routing\RouteCollection();
+
+        $routeCollection = new RouteCollection();
+     
         foreach ($this->modules as $key => $module) {
-
-            $YML = $this->getModuleRoute($module);
-            foreach ($YML as $key => $r) {
-                $route = $r["defaults"]["angular"];
-
-                if (is_string($route["template"])){
-                    $route["template"]=$module["location"] . $route["template"];
-                }
-                else
-                    $route["template"]["url"] = $module["location"] . $route["template"]["url"];
-
-                    $route["bundlePath"]=$this->bundlePath;
-
-                $routeCollection->add($key, new \Symfony\Component\Routing\Route($this->appName . $r["defaults"]["angular"]["templateUrl"], array("param" => $route)));
+            $YML = $module->getRoute();
+            foreach ($YML as $key => $route) {
+                $routeCollection->add($key, $route);
             }
         }
         return $routeCollection;
@@ -95,16 +65,13 @@ class ModuleManager {
     public function match($url) {
         $routeCollection = $this->complieRoute();
         $matcher = new UrlMatcher($routeCollection, $this->route->getContext());
-        $routeAngular = $matcher->match("/$this->appName/" . $url);
+        $routeAngular = $matcher->match("/" . $this->appName . "/" . $url);
         return $routeAngular["param"];
     }
 
     public function compileJavascript() {
-
         $path = "js/";
-        $fileName = "angular_module";
-
-
+        $fileName = $this->appName . ".modules";
         $factory = new AssetFactory($this->bundlePath);
 
         $fm = new FilterManager;
@@ -118,7 +85,8 @@ class ModuleManager {
         }
 
         $collection = new \Assetic\Asset\AssetCollection();
-        $collection->setTargetPath("js/angular_module.js");
+        $collection->setTargetPath($path . $fileName . ".js");
+
         $route = new \Assetic\Asset\StringAsset(
                 $this->twig->render(file_get_contents(dirname(__FILE__) . "/Views/directive.js"), array("date" => date("Y-m-d H:i:s"), "version" => 0.1))
         );
@@ -137,43 +105,21 @@ class ModuleManager {
             if (!array_key_exists("js", $module)) {
                 throw new \Exception("Unable to find config js in module $key");
             }
-
-            $collection->add($this->buildRouteAssetic($name, $module));
-
-            foreach ($module["js"] as $key => $javascript) {
-                $path = $module["location"] . $javascript;
+            $collection->add($module->buildAsseticRoute());
+            foreach ($module->getJs() as $key => $path) {
                 array_push($input, $path);
             }
             foreach ($factory->createAsset($input, $filter) as $Asset) {
                 $collection->add($Asset);
             }
         }
-        $writer = new AssetWriter($this->appPath);
+        $writer = new AssetWriter($this->webPath);
 
         $writer->writeAsset($collection);
-        return $this->appName . "/js/" . $fileName . ".js";
-    }
 
-    /**
-     * 
-     * @param {string} $name
-     * @param {array} $module
-     * @return \Assetic\Asset\StringAsset
-     */
-    function buildRouteAssetic($name, $module) {
-        $routes = $this->getModuleRoute($module);
-
-        $route = new \Assetic\Asset\StringAsset(
-                $this->twig->render(file_get_contents(dirname(__FILE__) . "/Views/route.js"), array(
-                    "date" => date("Y-m-d H:i:s"),
-                    "version" => 0.1,
-                    "namespace" => $module["namespace"],
-                    "name" => $name,
-                    "routes" => $routes,
-                ))
-        );
-        return $route;
+        return "js/" . $fileName . ".js";
     }
 
 }
+
 ?>

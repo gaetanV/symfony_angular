@@ -1,7 +1,8 @@
 /**
 * (c) Gaetan Vigneron <gaetan@webworkshops.fr>
-*  Generate by angularBundle V {{version}}
-*  @Module: {{name}}
+*  @GenerateBy angular symfony  : https://github.com/gaetanV/symfony_angular
+*  @Module: {{namespace}} 
+*  @Version :  {{version}}
 *  @Build: {{date}}  
 */
 
