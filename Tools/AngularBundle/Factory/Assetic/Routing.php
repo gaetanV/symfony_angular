@@ -16,8 +16,8 @@ class Routing implements FilterInterface {
     public function filterLoad(AssetInterface $asset) {
         $content = $asset->getContent();
    
-
-        $content = preg_replace("/symfony[\.]getBaseUrl\(\)/", "'" .$this->route->getContext()->getBaseUrl() . "'",$content);
+        /*Warning .$this->route->getContext()->getBaseUrl() not have context*/
+        //$content = preg_replace("/symfony[\.]getBaseUrl\(\)/", "'" .$this->route->getContext()->getBaseUrl() . "'",$content);
         
         $pattern = "/symfony[\.]path\s*\(\s*['|\"]\s*(.+)\s*\s*['|\"]\)/";
         $result = preg_replace_callback($pattern, function ($matches) {

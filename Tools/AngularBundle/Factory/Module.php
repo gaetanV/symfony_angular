@@ -23,7 +23,9 @@ class Module {
     private $routeArray = array();
 
     public function __construct($location, $outLocation) {
+
         $this->outLocation = $outLocation;
+
         $this->location = $location;
         $this->twig = new \Twig_Environment(new \Twig_Loader_String());
 
@@ -102,7 +104,8 @@ class Module {
             }
 
 
-            $this->route[$key] = new Route($this->outLocation . $templateUrl, $param);
+            $this->route[$key] = new Route("/".$templateUrl, $param); // TO DO TRANSFORM "/"
+            
         }
 
         return $this->route;
@@ -111,13 +114,15 @@ class Module {
     public function buildAsseticRoute() {
         $angularRoute=array();
         $routes=$this->getRoute();
+        
         foreach($routes as $key=> $route){
-            $angular=$route->getDefaults();
+         $angular=$route->getDefaults();
              $pattern = "/[{]([^}\/]*)(}|$|\/)/";
-               $replacement = ':${1}';
-            $angularRoute[$key]["path"]=preg_replace($pattern, $replacement,  $angular["path"]); 
-            $angularRoute[$key]["templateUrl"]=$angular["templateUrl"];
-             $angularRoute[$key]["controller"]=$angular["controller"];
+             $replacement = ':${1}';
+              $angularRoute[$key]["path"]=preg_replace($pattern, $replacement,  $angular["path"]); 
+        
+              $angularRoute[$key]["templateUrl"]= $angular["templateUrl"];
+              $angularRoute[$key]["controller"]=$angular["controller"];
         }
 
         $route = new \Assetic\Asset\StringAsset(

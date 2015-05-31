@@ -11,19 +11,25 @@ use Assetic\Factory\AssetFactory;
 use Assetic\FilterManager;
 use Assetic\AssetWriter;
 
+
 class ModuleManager {
 
     private $appName;
     private $modules = array();
     private $route;
-
+    
+    
     public function __construct($appName = "app") {
+        
+         
         global $kernel;
         $rootDir = dirname($kernel->getRootDir());
+ 
         $this->route = new Router(new Container(), "");
         $this->twig = new \Twig_Environment(new \Twig_Loader_String());
 
         $this->webPath = join(DIRECTORY_SEPARATOR, array($rootDir, "/web/"));
+     
         $this->bundlePath = join(DIRECTORY_SEPARATOR, array($rootDir, "/src/"));
         $this->appName = $appName;
         $this->appPath = join(DIRECTORY_SEPARATOR, array($this->webPath, $this->appName));
@@ -31,7 +37,7 @@ class ModuleManager {
 
     public function addModule($value) {
         $location = $this->bundlePath . $value . "\/";
-
+           
         $module = new Module($location, $this->appName);
         array_push($this->modules, $module);
         return true;
@@ -40,7 +46,7 @@ class ModuleManager {
     public function getMenuCollection() {
         $menuCollection = array();
         foreach ($this->modules as $module) {
-                       $routeCollection = $this->complieRoute();
+                       $routeCollection = $this->getRouteCollection();
                     $arrayTmp=array();
                     foreach($module->getMenu() as $menuGroupe=> $path){
                         $arrayTmp[$menuGroupe]=array();
@@ -64,7 +70,7 @@ class ModuleManager {
         return $menuCollection;
     }
 
-    private function complieRoute() {
+    private function getRouteCollection() {
 
         $routeCollection = new RouteCollection();
      
@@ -78,23 +84,45 @@ class ModuleManager {
     }
 
     public function matchResponse($url) {
+        
         $routeAngular = $this->match($url);
         $controller = new ModuleController();
-        return $controller->buildView($routeAngular);
+        $template=$controller->buildView($routeAngular);
+        return $template;
     }
 
     public function match($url) {
-        $routeCollection = $this->complieRoute();
-        $matcher = new UrlMatcher($routeCollection, $this->route->getContext());
-        $routeAngular = $matcher->match("/" . $this->appName . "/" . $url);
-        return $routeAngular["param"];
-    }
+        $routeCollection = $this->getRouteCollection();
 
-    public function compileJavascript() {
-        
+        $matcher = new UrlMatcher($routeCollection, $this->route->getContext());
    
+              $routeAngular = $matcher->match("/" .  $url); // TO DO TRANSFORM "/"
+        return $routeAngular;
+    }
+    
+    public function compileRoute($path) {
+         $controller = new ModuleController();
+    
+        $routeCollection = $this->getRouteCollection()->getIterator();
+        foreach($routeCollection as $route){
+            
+              $template=$controller->buildView($route->getDefaults());
+            
+              $tmp=  $this->write($this->webPath.$path.$route->getPath(), $template);
+              
+        }
+     
+       
+    }
+    
+    public function compileJavascript() {
+       
+     
         
-        $path = "js/";
+        
+       $path="js/";
+     
+      
         $fileName = $this->appName . ".modules";
         $factory = new AssetFactory($this->bundlePath);
 
@@ -132,7 +160,7 @@ class ModuleManager {
         foreach ($factory->createAsset($input) as $Asset) {
             $collection->add($Asset);
         };
-
+      
         foreach ($this->modules as $name => $module) {
             $input = array();
             $filter = array("ROUTE");
@@ -150,6 +178,17 @@ class ModuleManager {
         $writer->writeAsset($collection);
 
         return "js/" . $fileName . ".js";
+    }
+    
+     protected static function write($path, $contents)
+    {
+        if (!is_dir($dir = dirname($path)) && false === @mkdir($dir, 0777, true)) {
+            throw new \RuntimeException('Unable to create directory '.$dir);
+        }
+
+        if (false === @file_put_contents($path, $contents)) {
+            throw new \RuntimeException('Unable to write file '.$path);
+        }
     }
 
 }
