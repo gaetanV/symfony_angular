@@ -9,10 +9,10 @@ class Module {
     /* Construct */
 
     private $location;
-    private $outLocation;
 
     /* YAML */
     private $namespace;
+    private $prefix;
     private $menu = array();
     private $version = 1;
     private $js = array();
@@ -22,9 +22,9 @@ class Module {
     private $route;
     private $routeArray = array();
 
-    public function __construct($location, $outLocation) {
+    public function __construct($location) {
 
-        $this->outLocation = $outLocation;
+
 
         $this->location = $location;
         $this->twig = new \Twig_Environment(new \Twig_Loader_String());
@@ -45,6 +45,11 @@ class Module {
         if (array_key_exists("menu", $YML)) {
             if (is_array($YML["menu"]))
                 $this->menu = $YML["menu"];
+        }
+        
+        if (array_key_exists("prefix", $YML)) {
+          
+                $this->prefix = $YML["prefix"];
         }
 
         if (array_key_exists("js", $YML)) {
@@ -80,16 +85,12 @@ class Module {
                     $param = $route["defaults"]["angular"];
                     
                      if (array_key_exists("path", $route)) {
-                            $param["path"]=$route["path"];
+                            $param["path"]="/". $this->prefix.$route["path"];
                      }
                     
-                    if (array_key_exists("templateUrl", $route["defaults"]["angular"])) {
-                        $templateUrl = $route["defaults"]["angular"]["templateUrl"];
-
-                        if (is_string($param["template"])) {
-                            $param["template"] = $this->location . $param["template"];
-                        } else
-                            $param["template"]["url"] = $this->location . $param["template"]["url"];
+                    if (array_key_exists("template",$param)) {
+                        $param["twig"] = $this->location . $param["template"];
+                        $param["template"]=  str_replace(".twig", "", $this->prefix.$param["template"]);
                     }else {
                         throw new \Exception("Unable to load Route defaults angular templateUrl not found");
                         return;
@@ -104,7 +105,7 @@ class Module {
             }
 
 
-            $this->route[$key] = new Route("/".$templateUrl, $param); // TO DO TRANSFORM "/"
+            $this->route[$key] = new Route($param["template"] , $param); // TO DO TRANSFORM "/"
             
         }
 
@@ -119,14 +120,14 @@ class Module {
          $angular=$route->getDefaults();
              $pattern = "/[{]([^}\/]*)(}|$|\/)/";
              $replacement = ':${1}';
-              $angularRoute[$key]["path"]=preg_replace($pattern, $replacement,  $angular["path"]); 
+              $angularRoute[$key]["path"]=preg_replace($pattern, $replacement, $angular["path"]); 
         
-              $angularRoute[$key]["templateUrl"]= $angular["templateUrl"];
+              $angularRoute[$key]["templateUrl"]= $angular["template"];
               $angularRoute[$key]["controller"]=$angular["controller"];
         }
 
         $route = new \Assetic\Asset\StringAsset(
-                $this->twig->render(file_get_contents(dirname(__FILE__) . "/Views/route.js"), array(
+                $this->twig->render(file_get_contents(dirname(__FILE__) . "/views/route.js"), array(
 
                     "version" => $this->version,
                     "namespace" => $this->namespace,

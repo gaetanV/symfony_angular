@@ -14,17 +14,18 @@ class ModuleController extends Controller {
     public function buildView($routeAngular) {
 
         $twig = "";
-        if (array_key_exists("templateController", $routeAngular)) {
-            $twig = $this->forward($routeAngular["templateController"], array());
+        if (array_key_exists("_controller", $routeAngular)) {
+            $twig = $this->forward($routeAngular["_controller"], array());
         } else {
-            if (array_key_exists("template", $routeAngular)) {
-
-                if (!is_array($routeAngular["template"])) {
-                    $twig = $this->renderView($routeAngular["template"], array());
-                } else {
+            if (array_key_exists("twig", $routeAngular)) {
+                
+               if (!array_key_exists("inject", $routeAngular)) {
+                        $twig = $this->renderView($routeAngular["twig"], array());  
+               }
+               else {
                     $parms = array();
 
-                    foreach ($routeAngular["template"]["inject"] as $name => $param) {
+                    foreach ($routeAngular["inject"] as $name => $param) {
                         switch ($param["type"]) {
                             case "form":
                                 $entity = new $param["entity"]();
@@ -42,7 +43,7 @@ class ModuleController extends Controller {
                                 break;
                         }
                     }
-                    $twig = $this->renderView($routeAngular["template"]["url"], $parms);
+                    $twig = $this->renderView($routeAngular["twig"], $parms);
                 }
             }
         }

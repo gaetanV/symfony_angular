@@ -14,11 +14,10 @@ class Routing implements FilterInterface {
     }
 
     public function filterLoad(AssetInterface $asset) {
+      
         $content = $asset->getContent();
-   
-        /*Warning .$this->route->getContext()->getBaseUrl() not have context*/
-        //$content = preg_replace("/symfony[\.]getBaseUrl\(\)/", "'" .$this->route->getContext()->getBaseUrl() . "'",$content);
-        
+        $content = preg_replace("/symfony[\.]getBaseUrl\(\)/", "'" .$this->route->getContext()->getBaseUrl() . "'",$content);
+          echo($this->route->generate("cms_admin"));
         $pattern = "/symfony[\.]path\s*\(\s*['|\"]\s*(.+)\s*\s*['|\"]\)/";
         $result = preg_replace_callback($pattern, function ($matches) {
             return "'" . ($this->route->generate($matches[1]) . "'");
