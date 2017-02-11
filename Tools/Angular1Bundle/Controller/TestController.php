@@ -1,6 +1,6 @@
 <?php
 
-namespace Tools\AngularBundle\Controller;
+namespace Tools\Angular1Bundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -10,13 +10,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 class TestController extends Controller {
     /**
      *  @Route(
-     *      "/",
-     *      name="symfonyFormAngular",
+     *      "/angular1.html",
+     *      name="symfonyFormAngular1",
      *  )
      *  @Method({"GET"})
      */
-    public function symfonyFormAngularAction(Request $request) {   
-        return $this->render("ToolsAngularBundle::form.html.twig", array());
+    public function symfonyFormAngular1Action(Request $request) { 
+        $form = $this->container->get('form.factory');
+        dump($form);
+        return $this->render("ToolsAngular1Bundle::form.html.twig", array());
     }
 
 }
