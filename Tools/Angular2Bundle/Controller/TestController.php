@@ -7,7 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
-class TestController extends Controller {
+class TestController extends Controller 
+{
     /**
      *  @Route(
      *      "/angular2.html",
@@ -15,8 +16,8 @@ class TestController extends Controller {
      *  )
      *  @Method({"GET"})
      */
-    public function symfonyFormAngular2Action(Request $request) {   
+    public function symfonyFormAngular2Action(Request $request)
+    {   
         return $this->render("ToolsAngular2Bundle::form.html.twig", array());
     }
-
 }
