@@ -1,4 +1,0 @@
-tools_angular_userTest:
-    path:     /test
-    defaults: { _controller: ToolsAngularBundle:Test:setUser }
-    methods:  [POST,GET]
