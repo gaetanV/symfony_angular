@@ -2,33 +2,14 @@
 
 namespace Tools\AngularBundle\Services;
 
-use Symfony\Component\Form\FormRegistryInterface;
-use Symfony\Component\Form\ResolvedFormTypeFactory;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Tools\AngularBundle\Component\Form\FormFactory;
+use Tools\AngularBundle\Services\FormRegistryService;
 
-class AngularService {
-    
-    private $formFactory;
-    
-    public function __construct(FormRegistryInterface $registry) {
-        $this->formFactory =  new FormFactory($registry, new ResolvedFormTypeFactory());
+final class AngularService{
+   
+    public function __construct(FormRegistryService $formRegister, $formBoot ) {
+        
+        var_dump($formRegister->get($formBoot));
+        var_dump($formRegister->get($formBoot));
     }
      
-    /**
-     * {@inheritdoc}
-     */
-    public function createForm($type, $data = null, array $options = array())
-    {
-        return $this->formFactory->create($type, $data, $options);
-    }
-    
-    /**
-     * {@inheritdoc}
-     */
-    public function createFormBuilder($data = null, array $options = array())
-    {
-        return $this->formFactory->createBuilder(FormType::class, $data, $options);
-    }
-
 }

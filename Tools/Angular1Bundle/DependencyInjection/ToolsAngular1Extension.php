@@ -13,8 +13,10 @@ class ToolsAngular1Extension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
+        
        $container
                ->register('form.angular', 'Tools\AngularBundle\Services\AngularService')
-               ->addArgument(new Reference('form.registry'));
+               ->addArgument(new Reference('form.angular.register'))
+               ->addArgument("\Tools\Angular1Bundle\Boot\Form");
     }
 }

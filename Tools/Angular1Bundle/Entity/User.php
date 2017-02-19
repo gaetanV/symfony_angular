@@ -7,7 +7,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User
- *
+ * @Groups ( {
+ *      registration= "ROLE_USER"
+ * })
  * @ORM\Table(name="user")
  */
 class User implements UserInterface
