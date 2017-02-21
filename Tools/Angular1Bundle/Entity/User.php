@@ -1,10 +1,8 @@
 <?php
 namespace Tools\Angular1Bundle\Entity;
-
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-
 /**
  * User
  * @Groups ( {
@@ -22,7 +20,6 @@ class User implements UserInterface
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-
     /**
      * @var string
      * @Assert\NotBlank(
@@ -38,7 +35,6 @@ class User implements UserInterface
      * @ORM\Column(name="username", type="string", length=30)
      */
     private $username;
-
     /**
      * @var string
      * @Assert\Regex(
@@ -64,7 +60,6 @@ class User implements UserInterface
      * @ORM\Column(name="email", type="string", length=30)
      */
     private $email;
-
     /**
      * Get id
      *
@@ -74,7 +69,6 @@ class User implements UserInterface
     {
         return $this->id;
     }
-
     /**
      * Set username
      *
@@ -85,10 +79,8 @@ class User implements UserInterface
     public function setUsername($username)
     {
         $this->username = $username;
-
         return $this;
     }
-
     /**
      * Get username
      *
@@ -98,7 +90,6 @@ class User implements UserInterface
     {
         return $this->username;
     }
-
     /**
      * Set password
      *
@@ -111,7 +102,6 @@ class User implements UserInterface
         $this->password = password_hash($password,PASSWORD_BCRYPT);
         return $this;
     }
-
     /**
      * Get password
      *
@@ -132,10 +122,8 @@ class User implements UserInterface
     public function setEmail($email)
     {
         $this->email = $email;
-
         return $this;
     }
-
     /**
      * Get email
      *

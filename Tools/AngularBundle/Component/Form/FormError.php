@@ -6,6 +6,5 @@ class FormError
 {
     public function __construct()
     {
-
     }
 }

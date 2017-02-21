@@ -1,4 +1,5 @@
-export function userList($scope,userservice) { 
+let userList;
+userList.controller = function($scope,userservice){
     $scope.loading = true;
     userservice.getAll(function (e) {
         $scope.loading = false;
@@ -8,10 +9,10 @@ export function userList($scope,userservice) {
         userservice.remove(item.id, function (e) {
             $scope.list.splice($index, 1);
         });
-    }
+    } 
 }
-@Component({
-    template: `
+userList.component = {
+       template: `
        <h1  ng-init=" $root.title=trans(user.list|user) ">trans(user.list|user)</h1>
        <div ng-show="loading">
            Loading
@@ -26,6 +27,5 @@ export function userList($scope,userservice) {
        </div>
     `,
     styles: [``]
-})
-
-
+}
+module.exports = userList;

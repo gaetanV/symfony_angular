@@ -6,6 +6,5 @@ class FormBuilder
 {
     public function __construct()
     {
-
     }
 }

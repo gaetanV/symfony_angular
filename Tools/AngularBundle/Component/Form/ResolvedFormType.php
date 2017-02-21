@@ -6,6 +6,5 @@ class ResolvedFormType
 {
     public function __construct()
     {
-
     }
 }

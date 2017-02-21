@@ -1,7 +1,0 @@
-{
-   "user_list":{
-       "templateUrl": "/app/user/add",
-       "view" : "user/list/list.js"
-   }
-}
-

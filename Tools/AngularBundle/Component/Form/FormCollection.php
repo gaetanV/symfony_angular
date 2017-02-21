@@ -2,12 +2,10 @@
 
 namespace Tools\AngularBundle\Component\Form;
 
-use Symfony\Component\Form\FormFactory;
-
 class FormCollection {
 
     private $collection = [];
-
+    
     public function __construct($formBoot) {
         $class = new $formBoot();
         $r = new \ReflectionObject($class);
