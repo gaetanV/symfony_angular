@@ -1,8 +1,11 @@
 kernelservice = function ($service, $routeService, $cache, $thread) {
     
     function service($routeID, url, value, method) {
-        var url = $routeService.Url($routeID, url);
-        return {url: url, mehtod: method, value:value, data: $cache.get(url,value)}
+        var url = $routeService.Url($routeID, url, method);
+        this.url = url;
+        this.mehtod = mehtod;
+        this.value = value;
+        this.data =  $cache.get(url, value);
     }
     
     function request(routeID, method, data, callback) {
@@ -12,13 +15,13 @@ kernelservice = function ($service, $routeService, $cache, $thread) {
         }
         switch (method) {
             case "GET":
-                s = service(routeID, data.url, data.value, method);
+                s = new service(routeID, data.url, data.value, method);
                 break;
             case "POST":
-                s = service(routeID, data.url, data.value, method);
+                s = new service(routeID, data.url, data.value, method);
                 break;
             case "DELETE":
-                s = service(routeID, data.url, data.value, method);
+                s = new service(routeID, data.url, data.value, method);
                 break;
             default:
                 return false;

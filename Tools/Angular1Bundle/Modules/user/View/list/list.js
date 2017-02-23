@@ -1,18 +1,25 @@
-let userList;
-userList.controller = function($scope,userservice){
-    $scope.loading = true;
-    userservice.getAll(function (e) {
-        $scope.loading = false;
-        $scope.list = e;
-    });
-    $scope.remove=function($index,item){
-        userservice.remove(item.id, function (e) {
-            $scope.list.splice($index, 1);
-        });
-    } 
-}
-userList.component = {
-       template: `
+module.exports = {
+    controller: {
+        componentDidMount: ($scope, userservice) => {
+            userservice.getAll({
+                PrePersist:() => {
+                     $scope.loading = true;
+                },
+                PostPersist: (e) => {
+                    $scope.loading = false;
+                    $scope.list = e;
+                }
+            });
+            $scope.remove = function ($index, item) {
+                userservice.remove(item.id, function (e) {
+                    $scope.list.splice($index, 1);
+                });
+            };
+        },
+        componentWillUnmount: () => {
+        },
+    },
+    template: `
        <h1  ng-init=" $root.title=trans(user.list|user) ">trans(user.list|user)</h1>
        <div ng-show="loading">
            Loading
@@ -28,4 +35,3 @@ userList.component = {
     `,
     styles: [``]
 }
-module.exports = userList;

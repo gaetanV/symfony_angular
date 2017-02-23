@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * User
  * @Groups ( {
- *      registration= "ROLE_USER"
+ *      registration= ["ROLE_USER"]
  * })
  * @ORM\Table(name="user")
  */
