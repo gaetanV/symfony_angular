@@ -2,7 +2,6 @@
 
 namespace Tools\AngularBundle\Component\ConfigLoader;
 
-use Symfony\Component\Filesystem\Exception;
 use Symfony\Component\HttpKernel\Config\FileLocator;
 
 /**
@@ -39,19 +38,9 @@ abstract class ConfigLoaderAbstract implements ConfigLoaderInterface {
         } catch (\Exception $e) {
             throw new \Exception(ConfigLoaderInterface::ERROR_PARSE_ERROR);
         }
-
+        
         if (isset($this->bundleConfig["form"])) {
-            foreach ($this->bundleConfig["form"] as $formName => $formPath) {
-                $form = @file_get_contents($this->bundlePath . $formPath);
-                if (!$form) {
-                    throw new \Exception(ConfigLoaderInterface::ERROR_FILE_NOT_FOUND);
-                }
-                try {
-                    $this->forms[] = $this->parseConfigFile($form);
-                } catch (\Exception $e) {
-                    throw new \Exception(ConfigLoaderInterface::ERROR_PARSE_ERROR);
-                }
-            }
+           $this->forms = (array)$this->bundleConfig["form"];
         }
     }
 

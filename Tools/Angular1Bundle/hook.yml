@@ -1,3 +1,16 @@
 form:
-    lock_form : "Modules/user/Form/lockForm.yaml" 
-
+    lock_form : 
+        entityField :
+            "Tools/Angular1Bundle/Entity/User":
+                fields:
+                    - username 
+                    - password  
+                groupe : registration        
+        extraField :
+            custom:
+                Type : String
+                NotBlank : ~
+                Length : 
+                    min: 7
+                    max: 10
+        export : "Modules/user/Form/lockForm.js" 
