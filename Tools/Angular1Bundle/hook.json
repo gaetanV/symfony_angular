@@ -1,0 +1,5 @@
+{
+    "form" : {
+        "lock_form" : "Modules/user/Form/lockForm.json" 
+    }
+}
