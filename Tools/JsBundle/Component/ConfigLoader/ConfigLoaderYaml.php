@@ -1,6 +1,6 @@
 <?php
 
-namespace Tools\AngularBundle\Component\ConfigLoader;
+namespace Tools\JsBundle\Component\ConfigLoader;
 
 use Symfony\Component\Yaml\Yaml;
 

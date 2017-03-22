@@ -1,0 +1,5 @@
+JsBundle:
+    Commmand:
+        ExportBreezeCommand:
+            1: Le parameters _locale doit être précisé
+            2: Le parameters _locale doit être un array

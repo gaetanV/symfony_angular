@@ -1,6 +1,6 @@
 <?php
 
-namespace Tools\AngularBundle\Component\ConfigLoader;
+namespace Tools\JsBundle\Component\ConfigLoader;
 
 final class ConfigLoaderJson extends ConfigLoaderAbstract 
 {

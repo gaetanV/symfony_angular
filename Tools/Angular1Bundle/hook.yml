@@ -13,38 +13,35 @@ form:
                 Length : 
                     min: 7
                     max: 10
-        export : "Export/lockForm.js" 
-        
+       
 services:
        setUser : 
             route  : "/user/:id"   
             method : ["POST"]
             form   : lock_form
-            response: validation
-            export : "Export/service0js" 
+            response: 
+                 update: 
+                    entity: "Tools/Angular1Bundle/Entity/User"
+                    param : {id: id}
             
        getUser :      
             route: "/user/:id"
             requirements : { id: "\d+" }
             role : ["ROLE_USER"]
             method : ["GET"]
-            lifetime : "455646"
             response: 
                 find: 
                    entity: "Tools/Angular1Bundle/Entity/User"
                    param : {id: id}
-            export : "Export/service1js" 
             
        getScore : 
             route: "/score/:id"
             requirements: { id: "\d+" }
             role : ["ROLE_USER"]
             method : ["GET"]
-            lifetime : "455646"
             response: 
                 mock : 
                     case1 :
                         param : {id: 1}
-                        result: '{name:"toto"}'
-            export : "Export/service2js"             
+                        result: '{name:"toto"}'           
                         

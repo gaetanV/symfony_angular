@@ -1,30 +1,34 @@
 <?php
 
-namespace Tools\AngularBundle\Component\Generator;
+namespace Tools\JsBundle\Component\Generator;
 
 use Symfony\Bundle\TwigBundle\TwigEngine;
-use Tools\AngularBundle\Component\Generator\FormValidator;
+use Tools\JsBundle\Component\Generator\FormValidator;
 
 final class GeneratorForm {
 
     private $templating;
-
+    
+    /**
+     * @param TwigEngine $twigEngine
+     */
+    
     public function __construct(TwigEngine $twigEngine) {
         $this->templating = $twigEngine;
     }
 
     public function deploy(FormValidator $form) {
-       
-        $exportMappingForm = $this->templating->render("ToolsAngularBundle::formMapping.js.twig", array() );
-        var_dump($exportMappingForm);
+      
+        $exportMappingForm = $this->templating->render("ToolsJsBundle::formMapping.js.twig", array() );
+       // var_dump($exportMappingForm);
         
-        $exportSymfonyForm = $this->templating->render("ToolsAngularBundle::formValidator.php.twig", array(
+        $exportSymfonyForm = $this->templating->render("ToolsJsBundle::formValidator.php.twig", array(
             "classname" => "validtor",
             "namespace" => "test",
             "imports" =>   $form->getImports(),
             "entities" =>  $form->getEntities(),
          ));
-        var_dump($exportSymfonyForm);
+        //var_dump($exportSymfonyForm);
     }
 
 }

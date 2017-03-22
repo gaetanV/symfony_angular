@@ -1,29 +1,29 @@
 <?php
 
-namespace Tools\AngularBundle\Command;
+namespace Tools\JsBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Tools\AngularBundle\Component\ConfigLoader\ConfigLoaderJson;
-use Tools\AngularBundle\Component\ConfigLoader\ConfigLoaderYaml;
-use Tools\AngularBundle\Component\Generator\GeneratorForm;
-use Tools\AngularBundle\Component\Generator\FormValidator;
+use Tools\JsBundle\Component\ConfigLoader\ConfigLoaderJson;
+use Tools\JsBundle\Component\ConfigLoader\ConfigLoaderYaml;
+use Tools\JsBundle\Component\Generator\GeneratorForm;
+use Tools\JsBundle\Component\Generator\FormValidator;
 
 /**
  * JSON  : 0.000482   <stdClass>
  * YML   : 0.004324   <array>
  */
-class ServiceDeployCommand extends ContainerAwareCommand {
+class DeployServiceCommand extends ContainerAwareCommand {
 
     /**
      * {@inheritdoc}
      */
     protected function configure() {
         $this
-                ->setName('angular:service')
-                ->setDescription('Deploy Angular Service CLI')
+                ->setName('js:service')
+                ->setDescription('Deploy Javascript Services & Validator')
                 ->addArgument('bundle', InputArgument::REQUIRED, 'What is your bundle?')
                 ->addArgument('type', InputArgument::OPTIONAL, 'What is your type?');
     }
@@ -32,8 +32,7 @@ class ServiceDeployCommand extends ContainerAwareCommand {
      * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
-        
-
+   
         try {
             switch (strtoupper($input->getArgument('type'))) {
                 case "YAML":
@@ -43,7 +42,7 @@ class ServiceDeployCommand extends ContainerAwareCommand {
                     $configLoader = new ConfigLoaderJson($input->getArgument('bundle'), $this->getContainer()->get('file_locator'));
                     break;
             }
-            $formGenerator = new GeneratorForm($this->getContainer()->get('templating'));
+            $formGenerator = new GeneratorForm($this->getContainer()->get('templating'),$this->getContainer()->get('validator'));
             foreach ($configLoader->getForms() as $form) {
                 $formGenerator->deploy(new FormValidator((array)$form));
             }

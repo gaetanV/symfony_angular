@@ -1,6 +1,7 @@
 <?php
 
-namespace Tools\AngularBundle\Component\Generator;
+namespace Tools\JsBundle\Component\Generator;
+
 
 
 final class FormValidator {
@@ -8,15 +9,18 @@ final class FormValidator {
     /**
      * @TODO Translator : ERROR
      */
-    const ERROR_ASSET_NOT_FOUND  = 3;
-    const ERROR_ENTITY_NOT_FOUND = 4;
+    const ERROR_ASSET_NOT_FOUND  = 1;
+    const ERROR_ENTITY_NOT_FOUND = 2;
 
     private $entities = [];
     private $imports = [
         "asserts" => [],
-        "entities" => [],
     ];
-
+    
+    /**
+     * @param array $form
+     * @throws \Exception
+     */
     public function __construct(array $form) {
        
         foreach ($form["entityField"] as $entity => $fields) {
@@ -24,13 +28,11 @@ final class FormValidator {
             $fields = (array)$fields;
             $import =  str_replace("/","\\",$entity);
             if (class_exists($import)) {
-                
-                $this->imports["entities"][$entity] = $import;
                 $groupe = false;
                 if (isset($fields["groupe"])) {
                     $groupe = $fields["groupe"];
                 }
-                $this->entities[] = ["name" => $entity, "groupe" => $groupe];
+                $this->entities[] = ["name" => "\\".$import, "groupe" => $groupe];
                 
             } else {
                 throw new \Exception(SELF::ERROR_ENTITY_NOT_FOUND);
@@ -38,17 +40,17 @@ final class FormValidator {
         }
 
         foreach ($form["extraField"] as $field => $asserts) {
-            foreach ($asserts as $asset => $options) {
-                $import = "Symfony\Component\Validator\Constraints\\" . $asset;
+            foreach ($asserts as $assert => $options) {
+                $import = "Symfony\Component\Validator\Constraints\\" . $assert;
                 if (class_exists($import)) {
-                    $this->imports["asserts"][$asset] = $import;
+                    $this->imports["asserts"][$assert] = $import;
                 } else {
                     throw new \Exception(SELF::ERROR_ASSET_NOT_FOUND);
                 }
             }
         }
     }
-
+  
     public function getImports() {
         return $this->imports;
     }

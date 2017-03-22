@@ -19,8 +19,8 @@
                         "max": 10
                     }
                 }
-            },
-            "export": "Export/lockForm.js" 
+            }
+            
         }
     },
     "services": {
@@ -32,14 +32,12 @@
             "persistence": ["User"],
             "role": ["ROLE_USER"],
             "method": ["GET"],
-            "lifetime": "455646",
             "response ": {
                 "find" :{
                     "entity:" : "Tools/Angular1Bundle/Entity/User",
                     "param" : {"id":"id"}
                 }
-            },
-            "export" : "Export/service1js" 
+            }
         }
     }
 }
