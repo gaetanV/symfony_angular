@@ -4,9 +4,6 @@ namespace Tools\JsBundle\Component\ConfigLoader;
 
 /**
  * ConfigLoaderInterface is the interface for get information about angular app configuration 
- * 
- * @author gaetan vigneron 
- * 
  */
 interface ConfigLoaderInterface {
 

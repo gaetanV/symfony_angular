@@ -4,8 +4,8 @@ form:
             "Tools/Angular1Bundle/Entity/User":
                 fields:
                     - username 
-                    - password  
-                groupe : registration        
+                    - password 
+                role: ["ROLE_USER"]
         extraField :
             custom:
                 Type : String
@@ -13,7 +13,6 @@ form:
                 Length : 
                     min: 7
                     max: 10
-       
 services:
        setUser : 
             route  : "/user/:id"   

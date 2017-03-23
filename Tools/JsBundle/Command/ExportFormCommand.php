@@ -15,7 +15,7 @@ class ExportFormCommand extends ContainerAwareCommand {
     protected function configure() {
         $this
                 ->setName('js:form')
-                ->setDescription('Deploy Javascript form mapping')
+                ->setDescription('Export Form')
                 ->addArgument('form', InputArgument::REQUIRED, 'What is your form?')
                 ->addArgument('output', InputArgument::OPTIONAL, 'Where you want to export your mapping?');
     }

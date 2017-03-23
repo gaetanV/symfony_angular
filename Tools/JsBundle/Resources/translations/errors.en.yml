@@ -3,3 +3,11 @@ JsBundle:
         ExportBreezeCommand:
             1: The parameters _locale must be defined
             2: The parameters _locale must be of type array
+    Component:
+        Entity:
+            EntityMapping:
+                1: The property {{ property}} is not found
+                2: The groupe {{ groupe }} for the {{ property }} is not found
+                3: The entity {{ entity }} is not found
+                4: Constraint {{ constraint }} is not yet supported please call your administrator
+                5: Constraint {{ constraint }} is depreciated please call your administrator

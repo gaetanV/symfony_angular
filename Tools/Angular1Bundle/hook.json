@@ -3,11 +3,11 @@
         "lock_form": {
             "entityField": {
                 "Tools/Angular1Bundle/Entity/User": {
-                    "groupe": "registration",
                     "fields": [
                         "username",
                         "password"
-                    ]
+                    ],
+                    "role": ["ROLE_USER"]
                 }
             },
             "extraField": {

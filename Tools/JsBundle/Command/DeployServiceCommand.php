@@ -11,10 +11,6 @@ use Tools\JsBundle\Component\ConfigLoader\ConfigLoaderYaml;
 use Tools\JsBundle\Component\Generator\GeneratorForm;
 use Tools\JsBundle\Component\Generator\FormValidator;
 
-/**
- * JSON  : 0.000482   <stdClass>
- * YML   : 0.004324   <array>
- */
 class DeployServiceCommand extends ContainerAwareCommand {
 
     /**

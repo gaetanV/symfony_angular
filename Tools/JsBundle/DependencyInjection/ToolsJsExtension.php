@@ -17,9 +17,6 @@ class ToolsJsExtension extends Extension {
         
         $container
                 ->register('js.breeze', 'Tools\JsBundle\Services\BreezeService');
-        
-        $container
-                ->register('js.error.builder', 'Tools\JsBundle\Services\ErrorBuilderService');
     }
 
 }

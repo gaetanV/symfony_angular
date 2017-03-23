@@ -6,9 +6,8 @@ use Symfony\Component\HttpKernel\Config\FileLocator;
 
 /**
  * ConfigLoaderAbstract is the abstract class for get information about angular app configuration 
- *
- * @author gaetan vigneron 
  */
+
 abstract class ConfigLoaderAbstract implements ConfigLoaderInterface {
 
     private $bundleAlias;
@@ -18,11 +17,9 @@ abstract class ConfigLoaderAbstract implements ConfigLoaderInterface {
 
     /**
      * Init the Config master file
+     * @param string $bundleAlias
      * @param FileLocator $fileLocator
-     * @param string      $bundleAlias
-     * @throws \Exception When the bundle is not found
-     * @throws \Exception When the file is not found
-     * @throws \Exception When the file is not a valid format
+     * @throws \Exception
      */
     public function __construct(string $bundleAlias, FileLocator $fileLocator) {
 

@@ -19,15 +19,10 @@ class User implements UserInterface
     private $id;
     /**
      * @var string
-     * @Assert\NotBlank(
-     *   groups={"registration"}
-     * )
+     * @Assert\NotBlank()
      * @Assert\Length(
-     *      groups={"user"},
      *      min = 4,
      *      max = 50,
-     *      minMessage = "Your first name must be at least {{ limit }} characters long",
-     *      maxMessage = "Your first name cannot be longer than {{ limit }} characters"
      * )
      * @ORM\Column(name="username", type="string", length=30)
      */
@@ -37,12 +32,10 @@ class User implements UserInterface
      * @Assert\Regex(
      *       pattern="/[0-9]+/",
      *       match=  true,
-     *       groups= {"registration"}
      * )
      * @Assert\Regex(
      *       pattern="/[a-zA-Z]+/",
      *       match=  true,
-     *       groups= {"registration"}
      * )
      * @ORM\Column(name="password", type="string", length=64)
      */
@@ -51,7 +44,6 @@ class User implements UserInterface
       /**
      * @var string
      * @Assert\Email(
-     *     message = "The email '{{ value }}' is not a valid email.",
      *     checkMX = true
      * )
      * @ORM\Column(name="email", type="string", length=30)
