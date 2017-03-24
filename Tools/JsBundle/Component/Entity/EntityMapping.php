@@ -8,7 +8,6 @@ use Symfony\Component\Validator\Constraint;
 
 /**
  * @reference   : http://symfony.com/doc/current/validation.html
- * @TODO        : finish constraints list ( All , Valid )
  * @TODO        : Recursive collection
  * @depreciated : Validator Groupe 
  */
@@ -24,6 +23,7 @@ final class EntityMapping {
     const ERROR_ENTITY_NOT_FOUND = 3;
     const ERROR_CONSTRAINT_NOT_SUPPORTED = 4;
     const ERROR_CONSTRAINT_DEPRECIATED = 5;
+   
 
     /**
      * @param string $entityAlias
@@ -51,6 +51,7 @@ final class EntityMapping {
     private function translateError(int $id, array $params = array()): string {
         return $this->translator->trans(EntityMapping::TRANS_ERROR_NAMESPACE . "." . $id, $params, 'errors');
     }
+
 
     /**
      * 
@@ -108,6 +109,12 @@ final class EntityMapping {
                 $response->type = $assert->type;
                 $response->message = $this->getTrans($assert->message);
                 break;
+            case "Range":
+                $response->min = $assert->min;
+                $response->max = $assert->max;
+                $response->minMessage = $this->getTransChoice($assert->minMessage, $assert->min, array('{{ limit }}' => $assert->min));
+                $response->maxMessage = $this->getTransChoice($assert->maxMessage, $assert->max, array('{{ limit }}' => $assert->max));
+                $response->invalidMessage = $assert->invalidMessage;
             case "Length":
                 $response->min = $assert->min;
                 $response->max = $assert->max;
@@ -135,12 +142,6 @@ final class EntityMapping {
                 $response->versions = $assert->versions;
                 $response->message = $this->getTrans($assert->message);
                 break;
-            case "Range":
-                $response->min = $assert->min;
-                $response->max = $assert->max;
-                $response->minMessage = $this->getTransChoice($assert->minMessage, $assert->min, array('{{ limit }}' => $assert->min));
-                $response->maxMessage = $this->getTransChoice($assert->maxMessage, $assert->max, array('{{ limit }}' => $assert->max));
-                break;
             case "EqualTo":
             case "NotEqualTo":
             case "IdenticalTo":
@@ -156,24 +157,7 @@ final class EntityMapping {
                 $response->format = $assert->format;
                 $response->message = $this->getTrans($assert->message);
                 break;
-            case "file":
-                $upload_max_size = ini_get('upload_max_filesize');
-                $response->maxSize = $assert->maxSize < $upload_max_size ? $assert->maxSize : $upload_max_size;
-                $repsonse->mimeTypes = $assert->mimeTypes;
-                $response->disallowEmptyMessage = $this->disallowEmptyMessage;
-                $repsonse->uploadErrorMessage = $this->getTrans($assert->uploadErrorMessage);
-                $response->uploadFormSizeErrorMessage = $this->getTrans($assert->uploadFormSizeErrorMessage);
-                $repsonse->mimeTypesMessage = $this->getTrans($assert->mimeTypesMessage, array('{{ types  }}' => "%type%"));
-                $repsonse->maxSizeMessage = $this->getTrans($assert->maxSizeMessage, array('{{ limit }}' => $assert->maxSize, '{{ suffix }}' => "%suffix%"));
-                break;
             case "Image":
-                $response->maxSize = $assert->maxSize < $upload_max_size ? $assert->maxSize : $upload_max_size;
-                $repsonse->mimeTypes = $assert->mimeTypes;
-                $response->disallowEmptyMessage = $this->disallowEmptyMessage;
-                $repsonse->uploadErrorMessage = $this->getTrans($assert->uploadErrorMessage);
-                $response->uploadFormSizeErrorMessage = $this->getTrans($assert->uploadFormSizeErrorMessage);
-                $repsonse->mimeTypesMessage = $this->getTrans($assert->mimeTypesMessage, array('{{ types  }}' => "%type%"));
-                $repsonse->maxSizeMessage = $this->getTrans($assert->maxSizeMessage, array('{{ limit }}' => $assert->maxSize, '{{ suffix }}' => "%suffix%"));
                 $response->minRatio = $assert->minRatio;
                 $response->maxRatio = $assert->maxRatio;
                 $response->allowSquare = $assert->allowSquare;
@@ -187,10 +171,20 @@ final class EntityMapping {
                 $response->maxHeightMessage = $this->getTrans($assert->maxSizeMessage, array('{{ height }}' => "%height%", '{{ max_height }}' => $assert->maxHeight));
                 $response->minHeight = $assert->minHeight;
                 $response->minHeightMessage = $this->getTrans($assert->minSizeMessage, array('{{ height }}' => "%height%", '{{ min_height }}' => $assert->minHeight));
+            case "File":
+                $upload_max_size = ini_get('upload_max_filesize');
+                $response->maxSize = $assert->maxSize < $upload_max_size ? $assert->maxSize : $upload_max_size;
+                $repsonse->mimeTypes = $assert->mimeTypes;
+                $response->disallowEmptyMessage = $this->disallowEmptyMessage;
+                $repsonse->uploadErrorMessage = $this->getTrans($assert->uploadErrorMessage);
+                $response->uploadFormSizeErrorMessage = $this->getTrans($assert->uploadFormSizeErrorMessage);
+                $repsonse->mimeTypesMessage = $this->getTrans($assert->mimeTypesMessage, array('{{ types  }}' => "%type%"));
+                $repsonse->maxSizeMessage = $this->getTrans($assert->maxSizeMessage, array('{{ limit }}' => $assert->maxSize, '{{ suffix }}' => "%suffix%"));
                 break;
             case "CardScheme ":
                 $response->message = $this->getTrans($assert->message);
                 $response->schemes = $assert->schemes;
+                break;
             case "Isbn":
                 $response->type = $assert->type;
                 $response->message = $this->getTrans($assert->message);
@@ -205,6 +199,8 @@ final class EntityMapping {
                 break;
             case "Callback":
             case "Expression":
+            case "All":
+            case "Valid":
                 throw new \Exception($this->translateError(SELF::ERROR_CONSTRAINT_DEPRECIATED, array('{{ constraint }}' => $type)));
             default :
                 throw new \Exception($this->translateError(SELF::ERROR_CONSTRAINT_NOT_SUPPORTED, array('{{ constraint }}' => $type)));
@@ -218,7 +214,7 @@ final class EntityMapping {
      * @return array
      * @throws \Exception
      */
-    public function getAsserts(string $propertyName): array {
+    public function getAssert(string $propertyName): array {
 
         $response = [];
         if (!isset($this->meta->properties[$propertyName])) {
@@ -226,13 +222,12 @@ final class EntityMapping {
         }
         $property = $this->meta->properties[$propertyName];
 
-
         foreach ($property->constraints as $assert) {
             $response[] = $this->parseAssert($assert);
         }
         return $response;
     }
-    
+
     /**
      * @return \stdClass
      */
@@ -240,19 +235,9 @@ final class EntityMapping {
 
         $response = new \stdClass();
         foreach ($this->meta->properties as $propertyName => $property) {
-            $response->$propertyName = $this->getAsserts($propertyName);
+            $response->$propertyName = $this->getAssert($propertyName);
         }
         return $response;
-    }
-    
-    
-    public function checkAsserts(string $propertyName) {
-        
-    }
-    
-    
-    public function checkAllAsserts(): \stdClass {
-        
     }
 
 }

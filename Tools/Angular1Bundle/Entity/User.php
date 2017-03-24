@@ -4,7 +4,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 /**
- * User
+ * @ORM\Entity
  * @ORM\Table(name="user")
  */
 class User implements UserInterface

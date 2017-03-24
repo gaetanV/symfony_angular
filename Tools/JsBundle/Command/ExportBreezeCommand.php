@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tools\JsBundle\Component\Entity\EntityMapping;
+use Tools\JsBundle\Component\Entity\EntityMappingCheck;
 
 class ExportBreezeCommand extends ContainerAwareCommand {
     
@@ -51,6 +52,10 @@ class ExportBreezeCommand extends ContainerAwareCommand {
             return false;
         }
         try{
+          
+             $entityCheck = new EntityMappingCheck($input->getArgument('entity'), $this->getContainer()->get('validator'), $this->getContainer()->get('translator'), $this->getContainer()->get("doctrine")->getManager());
+             $entityCheck->checkAllAsserts();
+             
              $entity = new EntityMapping($input->getArgument('entity'), $this->getContainer()->get('validator'), $this->getContainer()->get('translator'), $languages);
              $output->writeln(json_encode($entity->getAllAsserts()));
         } catch (Exception $e) {
