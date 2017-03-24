@@ -17,6 +17,10 @@ class ToolsJsExtension extends Extension {
         
         $container
                 ->register('js.breeze', 'Tools\JsBundle\Services\BreezeService');
+        
+        $container
+                ->register('js.tools', 'Tools\JsBundle\Services\ToolsService')
+                ->addArgument(new Reference('translator'));
     }
 
 }

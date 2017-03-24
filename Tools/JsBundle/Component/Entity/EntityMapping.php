@@ -7,12 +7,11 @@ use Symfony\Component\Translation\DataCollectorTranslator;
 use Symfony\Component\Validator\Constraint;
 
 /**
- * @reference http://symfony.com/doc/current/validation.html
+ * @reference   : http://symfony.com/doc/current/validation.html
  * @TODO        : finish constraints list ( All , Valid )
  * @TODO        : Recursive collection
  * @depreciated : Validator Groupe 
  */
-
 final class EntityMapping {
 
     private $meta;
@@ -59,11 +58,20 @@ final class EntityMapping {
      * @param array $param
      * @return array
      */
-    private function getTranslations(string $messagePattern, array $param = array()): array {
+    private function getTrans(string $messagePattern, array $param = array()): array {
         $response = [];
         foreach ($this->languages as $lang) {
             $this->translator->setLocale($lang);
             $response[$lang] = $this->translator->trans($messagePattern, $param, 'validators');
+        }
+        return $response;
+    }
+
+    private function getTransChoice(string $messagePattern, int $number, array $param = array()): array {
+        $response = [];
+        foreach ($this->languages as $lang) {
+            $this->translator->setLocale($lang);
+            $response[$lang] = $this->translator->transChoice($messagePattern, $number, $param, 'validators');
         }
         return $response;
     }
@@ -93,47 +101,45 @@ final class EntityMapping {
             case "Luhn":
             case "Iban":
             case "UserPassword":
-                $response->message = $this->getTranslations($assert->message);
+            case "Email":
+                $response->message = $this->getTrans($assert->message);
                 break;
             case "Type":
                 $response->type = $assert->type;
-                $response->message = $this->getTranslations($assert->message);
-                break;
-            case "Email":
-                $response->message = $this->getTranslations($assert->message);
+                $response->message = $this->getTrans($assert->message);
                 break;
             case "Length":
                 $response->min = $assert->min;
                 $response->max = $assert->max;
-                $response->minMessage = $this->getTranslations($assert->minMessage, array('{{ limit }}' => $assert->min));
-                $response->maxMessage = $this->getTranslations($assert->maxMessage, array('{{ limit }}' => $assert->max));
+                $response->minMessage = $this->getTransChoice($assert->minMessage, $assert->min, array('{{ limit }}' => $assert->min));
+                $response->maxMessage = $this->getTransChoice($assert->maxMessage, $assert->max, array('{{ limit }}' => $assert->max));
                 if ($assert->min == $assert->max) {
-                    $response->exactMessage = $this->getTranslations($assert->exactMessage, array('{{ limit }}' => $assert->max));
+                    $response->exactMessage = $this->getTrans($assert->exactMessage, array('{{ limit }}' => $assert->max));
                 }
                 break;
             case "Url":
-                $response->message = $this->getTranslations($assert->message);
-                $response->protocols = $this->getTranslations($assert->protocols);
+                $response->message = $this->getTrans($assert->message);
+                $response->protocols = $this->getTrans($assert->protocols);
                 break;
             case "Regex":
-                $response->message = $this->getTranslations($assert->message);
+                $response->message = $this->getTrans($assert->message);
                 $response->htmlPattern = $assert->htmlPattern;
                 $response->match = $assert->match;
                 break;
             case "Ip":
                 $response->version = $assert->version;
-                $response->message = $this->getTranslations($assert->message);
+                $response->message = $this->getTrans($assert->message);
                 break;
             case "Uuid":
                 $response->strict = $assert->strict;
                 $response->versions = $assert->versions;
-                $response->message = $this->getTranslations($assert->message);
+                $response->message = $this->getTrans($assert->message);
                 break;
             case "Range":
                 $response->min = $assert->min;
                 $response->max = $assert->max;
-                $response->minMessage = $this->getTranslations($assert->minMessage, array('{{ limit }}' => $assert->min));
-                $response->maxMessage = $this->getTranslations($assert->maxMessage, array('{{ limit }}' => $assert->max));
+                $response->minMessage = $this->getTransChoice($assert->minMessage, $assert->min, array('{{ limit }}' => $assert->min));
+                $response->maxMessage = $this->getTransChoice($assert->maxMessage, $assert->max, array('{{ limit }}' => $assert->max));
                 break;
             case "EqualTo":
             case "NotEqualTo":
@@ -144,58 +150,58 @@ final class EntityMapping {
             case "GreaterThan":
             case "GreaterThanOrEqual":
                 $response->value = $assert->value;
-                $response->message = $this->getTranslations($assert->message, array('{{ compared_value }}' => $assert->value));
+                $response->message = $this->getTrans($assert->message, array('{{ compared_value }}' => $assert->value));
                 break;
             case "DateTime":
-                $response->format = $assert->$format;
-                $response->message = $this->getTranslations($assert->message);
+                $response->format = $assert->format;
+                $response->message = $this->getTrans($assert->message);
                 break;
             case "file":
                 $upload_max_size = ini_get('upload_max_filesize');
                 $response->maxSize = $assert->maxSize < $upload_max_size ? $assert->maxSize : $upload_max_size;
                 $repsonse->mimeTypes = $assert->mimeTypes;
                 $response->disallowEmptyMessage = $this->disallowEmptyMessage;
-                $repsonse->uploadErrorMessage = $this->getTranslations($assert->uploadErrorMessage);
-                $response->uploadFormSizeErrorMessage = $this->getTranslations($assert->uploadFormSizeErrorMessage);
-                $repsonse->mimeTypesMessage = $this->getTranslations($assert->mimeTypesMessage, array('{{ types  }}' => "%type%"));
-                $repsonse->maxSizeMessage = $this->getTranslations($assert->maxSizeMessage, array('{{ limit }}' => $assert->maxSize, '{{ suffix }}' => "%suffix%"));
+                $repsonse->uploadErrorMessage = $this->getTrans($assert->uploadErrorMessage);
+                $response->uploadFormSizeErrorMessage = $this->getTrans($assert->uploadFormSizeErrorMessage);
+                $repsonse->mimeTypesMessage = $this->getTrans($assert->mimeTypesMessage, array('{{ types  }}' => "%type%"));
+                $repsonse->maxSizeMessage = $this->getTrans($assert->maxSizeMessage, array('{{ limit }}' => $assert->maxSize, '{{ suffix }}' => "%suffix%"));
                 break;
             case "Image":
                 $response->maxSize = $assert->maxSize < $upload_max_size ? $assert->maxSize : $upload_max_size;
                 $repsonse->mimeTypes = $assert->mimeTypes;
                 $response->disallowEmptyMessage = $this->disallowEmptyMessage;
-                $repsonse->uploadErrorMessage = $this->getTranslations($assert->uploadErrorMessage);
-                $response->uploadFormSizeErrorMessage = $this->getTranslations($assert->uploadFormSizeErrorMessage);
-                $repsonse->mimeTypesMessage = $this->getTranslations($assert->mimeTypesMessage, array('{{ types  }}' => "%type%"));
-                $repsonse->maxSizeMessage = $this->getTranslations($assert->maxSizeMessage, array('{{ limit }}' => $assert->maxSize, '{{ suffix }}' => "%suffix%"));
+                $repsonse->uploadErrorMessage = $this->getTrans($assert->uploadErrorMessage);
+                $response->uploadFormSizeErrorMessage = $this->getTrans($assert->uploadFormSizeErrorMessage);
+                $repsonse->mimeTypesMessage = $this->getTrans($assert->mimeTypesMessage, array('{{ types  }}' => "%type%"));
+                $repsonse->maxSizeMessage = $this->getTrans($assert->maxSizeMessage, array('{{ limit }}' => $assert->maxSize, '{{ suffix }}' => "%suffix%"));
                 $response->minRatio = $assert->minRatio;
                 $response->maxRatio = $assert->maxRatio;
                 $response->allowSquare = $assert->allowSquare;
                 $response->allowLandscape = $assert->allowLandscape;
                 $response->allowPortrait = $assert->allowPortrait;
                 $response->maxWidth = $assert->maxWidth;
-                $response->maxWidthMessage = $this->getTranslations($assert->maxSizeMessage, array('{{ width }}' => "%width%", '{{ max_width }}' => $assert->maxWidth));
+                $response->maxWidthMessage = $this->getTrans($assert->maxSizeMessage, array('{{ width }}' => "%width%", '{{ max_width }}' => $assert->maxWidth));
                 $response->minWidth = $assert->minWidth;
-                $response->minWidthMessage = $this->getTranslations($assert->minSizeMessage, array('{{ width }}' => "%width%", '{{ min_width }}' => $assert->minWidth));
+                $response->minWidthMessage = $this->getTrans($assert->minSizeMessage, array('{{ width }}' => "%width%", '{{ min_width }}' => $assert->minWidth));
                 $response->maxHeight = $assert->maxHeight;
-                $response->maxHeightMessage = $this->getTranslations($assert->maxSizeMessage, array('{{ height }}' => "%height%", '{{ max_height }}' => $assert->maxHeight));
+                $response->maxHeightMessage = $this->getTrans($assert->maxSizeMessage, array('{{ height }}' => "%height%", '{{ max_height }}' => $assert->maxHeight));
                 $response->minHeight = $assert->minHeight;
-                $response->minHeightMessage = $this->getTranslations($assert->minSizeMessage, array('{{ height }}' => "%height%", '{{ min_height }}' => $assert->minHeight));
+                $response->minHeightMessage = $this->getTrans($assert->minSizeMessage, array('{{ height }}' => "%height%", '{{ min_height }}' => $assert->minHeight));
                 break;
             case "CardScheme ":
-                $response->message = $this->getTranslations($assert->message);
+                $response->message = $this->getTrans($assert->message);
                 $response->schemes = $assert->schemes;
             case "Isbn":
                 $response->type = $assert->type;
-                $response->message = $this->getTranslations($assert->message);
-                $response->isbn10Message = $this->getTranslations($assert->isbn10Message);
-                $response->isbn13Message = $this->getTranslations($assert->isbn13Message);
-                $response->sbn10Message = $this->getTranslations($assert->sbn10Message);
+                $response->message = $this->getTrans($assert->message);
+                $response->isbn10Message = $this->getTrans($assert->isbn10Message);
+                $response->isbn13Message = $this->getTrans($assert->isbn13Message);
+                $response->sbn10Message = $this->getTrans($assert->sbn10Message);
                 break;
             case "Issn":
                 $response->caseSensitive = $assert->caseSensitive;
                 $response->requireHyphen = $assert->requireHyphen;
-                $response->message = $this->getTranslations($assert->message);
+                $response->message = $this->getTrans($assert->message);
                 break;
             case "Callback":
             case "Expression":
@@ -227,13 +233,26 @@ final class EntityMapping {
         return $response;
     }
     
-
+    /**
+     * @return \stdClass
+     */
     public function getAllAsserts(): \stdClass {
 
-        $response =  new \stdClass();
+        $response = new \stdClass();
         foreach ($this->meta->properties as $propertyName => $property) {
             $response->$propertyName = $this->getAsserts($propertyName);
         }
         return $response;
     }
+    
+    
+    public function checkAsserts(string $propertyName) {
+        
+    }
+    
+    
+    public function checkAllAsserts(): \stdClass {
+        
+    }
+
 }
