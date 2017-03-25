@@ -1,13 +1,13 @@
 {
     "form": {
         "lock_form": {
+            "role": ["ROLE_USER"],
             "entityField": {
-                "Tools/Angular1Bundle/Entity/User": {
+                "/Tools/TestBundle/Entity/User": {
                     "fields": [
                         "username",
                         "password"
-                    ],
-                    "role": ["ROLE_USER"]
+                    ]
                 }
             },
             "extraField": {

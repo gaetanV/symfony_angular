@@ -1,5 +1,5 @@
 <?php
-namespace Tools\Angular1Bundle\Entity;
+namespace Tools\TestBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -22,7 +22,7 @@ class User implements UserInterface
      * @Assert\NotBlank()
      * @Assert\Length(
      *      min = 4,
-     *      max = 50,
+     *      max = 30,
      * )
      * @ORM\Column(name="username", type="string", length=30)
      */

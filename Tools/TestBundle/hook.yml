@@ -1,11 +1,12 @@
 form:
     lock_form : 
+        role: ["ROLE_USER"]
         entityField :
             "Tools/Angular1Bundle/Entity/User":
                 fields:
                     - username 
                     - password 
-                role: ["ROLE_USER"]
+               
         extraField :
             custom:
                 Type : String

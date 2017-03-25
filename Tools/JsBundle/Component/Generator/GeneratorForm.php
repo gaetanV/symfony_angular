@@ -20,7 +20,7 @@ final class GeneratorForm {
     public function deploy(FormValidator $form) {
       
         $exportMappingForm = $this->templating->render("ToolsJsBundle::formMapping.js.twig", array() );
-       // var_dump($exportMappingForm);
+       var_dump($exportMappingForm);
         
         $exportSymfonyForm = $this->templating->render("ToolsJsBundle::formValidator.php.twig", array(
             "classname" => "validtor",
@@ -28,7 +28,7 @@ final class GeneratorForm {
             "imports" =>   $form->getImports(),
             "entities" =>  $form->getEntities(),
          ));
-        //var_dump($exportSymfonyForm);
+        var_dump($exportSymfonyForm);
     }
 
 }

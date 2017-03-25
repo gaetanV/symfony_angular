@@ -28,7 +28,7 @@ class DeployServiceCommand extends ContainerAwareCommand {
      * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
-   
+
         try {
             switch (strtoupper($input->getArgument('type'))) {
                 case "YAML":
@@ -38,9 +38,10 @@ class DeployServiceCommand extends ContainerAwareCommand {
                     $configLoader = new ConfigLoaderJson($input->getArgument('bundle'), $this->getContainer()->get('file_locator'));
                     break;
             }
-            $formGenerator = new GeneratorForm($this->getContainer()->get('templating'),$this->getContainer()->get('validator'));
+            $formGenerator = new GeneratorForm($this->getContainer()->get('templating'), $this->getContainer()->get('validator'));
+
             foreach ($configLoader->getForms() as $form) {
-                $formGenerator->deploy(new FormValidator((array)$form));
+                $formGenerator->deploy(new FormValidator((array) $form, $this->getContainer()->get('translator'),$this->getContainer()->get('validator'),$this->getContainer()->get("doctrine")->getManager()));
             }
 
             $output->writeln("complet");

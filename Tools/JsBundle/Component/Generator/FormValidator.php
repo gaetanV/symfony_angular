@@ -2,41 +2,33 @@
 
 namespace Tools\JsBundle\Component\Generator;
 
-
+use Tools\JsBundle\Component\Entity\EntityReflection;
+use Symfony\Component\Translation\DataCollectorTranslator;
+use Symfony\Component\Validator\Validator\RecursiveValidator;
+use Doctrine\ORM\EntityManager;
 
 final class FormValidator {
 
-    /**
-     * @TODO Translator : ERROR
-     */
-    const ERROR_ASSET_NOT_FOUND  = 1;
-    const ERROR_ENTITY_NOT_FOUND = 2;
+    const TRANS_ERROR_NAMESPACE = "JsBundle.Component.Entity.FormValidator";
+    const ERROR_CONSTRAINT_NOT_FOUND = 1;
 
     private $entities = [];
     private $imports = [
         "asserts" => [],
     ];
-    
+
     /**
      * @param array $form
      * @throws \Exception
      */
-    public function __construct(array $form) {
-       
-        foreach ($form["entityField"] as $entity => $fields) {
-            
-            $fields = (array)$fields;
-            $import =  str_replace("/","\\",$entity);
-            if (class_exists($import)) {
-                $groupe = false;
-                if (isset($fields["groupe"])) {
-                    $groupe = $fields["groupe"];
-                }
-                $this->entities[] = ["name" => "\\".$import, "groupe" => $groupe];
-                
-            } else {
-                throw new \Exception(SELF::ERROR_ENTITY_NOT_FOUND);
-            }
+    public function __construct(array $form, DataCollectorTranslator $translator, RecursiveValidator $validator, EntityManager $em) {
+
+        foreach ($form["entityField"] as $entityAlias => $fields) {
+
+            $fields = (array) $fields;
+            $entityAlias =  str_replace("/","\\",$entityAlias);
+            $this->entities[]  = new EntityReflection($entityAlias, $translator, $validator, $em);
+
         }
 
         foreach ($form["extraField"] as $field => $asserts) {
@@ -45,12 +37,12 @@ final class FormValidator {
                 if (class_exists($import)) {
                     $this->imports["asserts"][$assert] = $import;
                 } else {
-                    throw new \Exception(SELF::ERROR_ASSET_NOT_FOUND);
+                    throw new \Exception(SELF::ERROR_CONSTRAINT_NOT_FOUND);
                 }
             }
         }
     }
-  
+    
     public function getImports() {
         return $this->imports;
     }

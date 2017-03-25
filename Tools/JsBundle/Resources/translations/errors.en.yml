@@ -1,21 +1,24 @@
 JsBundle:
     Commmand:
-        ExportBreezeCommand:
+        ExportEntityCommand:
             1: The parameters _locale must be defined
-            2: The parameters _locale must be of type array
+            2: The parameters _locale must be of type array       
     Component:
+        Generator:
+            FormValidator:
+                1: The Constraint {{ constraint }} is not found
         Entity:
+            EntityReflection:
+                1: The entity {{ entity }} is not found
+                2: The property {{ property }} is not found
             EntityMapping:
-                1: The property {{ property}} is not found
-                2: The groupe {{ groupe }} for the {{ property }} is not found
-                3: The entity {{ entity }} is not found
-                4: Constraint {{ constraint }} is not yet supported please call your administrator
-                5: Constraint {{ constraint }} is depreciated please call your administrator 
-            EntityMappingCheck:
-                1: Max size {{ max_size }} is more than php allowed configuration {{ upload_max_filesize }} please call your administrator
+                1: Constraint {{ constraint }} is not yet supported please call your administrator
+                2: Constraint {{ constraint }} is depreciated please call your administrator 
+                3: Constraint {{ constraint }} is duplicated
+            EntityCheck:
+                1: Max size {{ max_size }} is greater than php allowed configuration {{ upload_max_filesize }} please call your administrator
                 2: Min size {{ min_size }} is greater than Max size {{ max_size }}
                 3: Min range {{ min_range }} is greater than Max range {{ max_range }}
                 4: Constraint {{ constraint }} is not valid for this type {{ type }}
                 5: Check Constraint {{ constraint }} is not yet supported please call your administrator
-                6: Max range {{ max_range }} is more than allowed database configuration {{ length }} 
-                7: The entity {{ entity }} is not found
+                6: Max range {{ max_range }} is greater than allowed database configuration {{ length }} 

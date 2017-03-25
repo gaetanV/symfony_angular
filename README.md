@@ -1,6 +1,6 @@
 ```
 (c) Gaetan Vigneron <gaetan@webworkshops.fr>
- V 0.1.05
+ V 0.1.06
  23/03/2017
 
 require PHP >= 7.0
@@ -34,7 +34,7 @@ parameters:
     @Arguments Config Format [optionnal]
 
     Exemple :
-    php bin/console js:service ToolsAngular1Bundle 
+    php bin/console js:service ToolsTestBundle
 
 ```
 ```
@@ -46,19 +46,19 @@ parameters:
     @Arguments Output [optionnal] 
 
     Exemple :
-    php bin/console js:form \Tools\Angular1Bundle\Form\UserInscription inscription.js 
+    php bin/console js:form \Tools\TestBundle\Form\UserInscription
 
 ```
 ```
     #3 Export Symfony3 Entity  
  
-    js:breeze
+    js:entity
 
     @Arguments Entity
     @Arguments Output [optionnal] 
 
     Exemple :
-    php bin/console js:breeze \Tools\Angular1Bundle\Entity\User user.js 
+    php bin/console js:entity \Tools\TestBundle\Entity\User 
 
 ```
 

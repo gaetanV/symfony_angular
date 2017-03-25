@@ -2,7 +2,7 @@
 
 namespace Tools\JsBundle\Services;
 
-class BreezeService {
+class EntityService {
 
     public function __construct() {
 

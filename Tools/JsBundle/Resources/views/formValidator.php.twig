@@ -27,11 +27,8 @@ class  {{classname}}
     
 {% for entity in entities %}
         $tmpEntity = new {{entity.name}}();
-{% if entity.groupe %}
-        $violations = $this->validator->validate($tmpEntity,null,array('{{entity.groupe}}'));
-{% else %}
         $violations = $this->validator->validate($tmpEntity);
-{% endif %}{% endfor %}          
+{% endfor %}          
 
 
         $validator = Validation::createValidator();

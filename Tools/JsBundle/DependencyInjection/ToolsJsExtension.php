@@ -16,7 +16,7 @@ class ToolsJsExtension extends Extension {
                 ->register('js.form', 'Tools\JsBundle\Services\FormService');
         
         $container
-                ->register('js.breeze', 'Tools\JsBundle\Services\BreezeService');
+                ->register('js.entity', 'Tools\JsBundle\Services\EntityService');
         
         $container
                 ->register('js.tools', 'Tools\JsBundle\Services\ToolsService')
