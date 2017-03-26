@@ -4,6 +4,9 @@ namespace Tools\JsBundle\Component\Entity;
 
 use Symfony\Component\Validator\Constraint;
 use Tools\JsBundle\Component\Entity\EntityReflection;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\Type;
+
 /**
  * @reference   : http://symfony.com/doc/current/validation.html
  * @depreciated : Validator Groupe 
@@ -13,17 +16,19 @@ final class EntityMapping extends EntityCheck {
 
     protected $entity;
     protected $languages;
+    protected $strict = false;
 
     const TRANS_ERROR_NAMESPACE = "JsBundle.Component.Entity.EntityMapping";
     const ERROR_CONSTRAINT_NOT_SUPPORTED = 1;
     const ERROR_CONSTRAINT_DEPRECIATED = 2;
     const ERROR_CONSTRAINT_DUPLICATED = 3;
-    
-   /**
-   * @param EntityReflection $entity
-   * @param array $languages
-   */
-    public function __construct(EntityReflection $entity, array $languages) {
+
+    /**
+     * @param EntityReflection $entity
+     * @param array $languages
+     */
+    public function __construct(EntityReflection $entity, array $languages, bool $strict = false) {
+        $this->strict = $strict;
         $this->entity = $entity;
         $this->languages = $languages;
         parent::__construct($entity);
@@ -116,6 +121,7 @@ final class EntityMapping extends EntityCheck {
             case "Regex":
                 $definition->message = $this->getTrans($assert->message);
                 $definition->htmlPattern = $assert->htmlPattern;
+                $definition->pattern = $assert->pattern;
                 $definition->match = $assert->match;
                 break;
             case "Ip":
@@ -195,24 +201,44 @@ final class EntityMapping extends EntityCheck {
         $response->definition = $definition;
         return $response;
     }
-
+    
+       
+    
+    
     public function exportAsserts(string $propertyName): \stdClass {
         $response = new \stdClass;
         $property = $this->entity->getPropertyAsserts($propertyName);
         foreach ($property->constraints as $name => $assert) {
             $assert = $this->parseAssert($assert);
-            switch($assert->name){
+            switch ($assert->name) {
                 case "Regex":
-                    if(!isset($response->{$assert->name})){
+                    if (!isset($response->{$assert->name})) {
                         $response->{$assert->name} = [];
                     }
+
                     $response->{$assert->name}[] = $assert->definition;
                     break;
                 default:
-                    if(isset($response->{$assert->name})){
+                    if (isset($response->{$assert->name})) {
                         throw new \Exception($this->translateError(EntityMapping::ERROR_CONSTRAINT_DUPLICATED, array('{{ constraint }}' => $assert->name)));
                     }
                     $response->{$assert->name} = $assert->definition;
+            }
+        }
+        if ($this->strict) {
+            $this->checkAsserts($propertyName);
+            $case1 = isset($response->Length);
+            $case2 = isset($response->Type);
+            if (!$case1 || !$case2) {
+                $metadata = $this->entity->getPropertyMetaData($propertyName);
+                if (!$case1) {
+                    $assert = $this->parseAssert(new Length(array('max' => $metadata["length"],'min' => 0)));
+                    $response->{$assert->name} = $assert->definition;
+                }
+                if (!$case2) {
+                    $assert = $this->parseAssert(new Type(array('type' => $metadata["type"])));
+                    $response->{$assert->name} = $assert->definition;
+                }
             }
         }
         return $response;
@@ -223,11 +249,11 @@ final class EntityMapping extends EntityCheck {
      */
     public function exportAllAsserts(): \stdClass {
         $response = new \stdClass();
-        
+
         foreach ($this->entity->getAsserts()->properties as $propertyName => $property) {
             $response->$propertyName = $this->exportAsserts($propertyName);
         }
-       
+
         return $response;
     }
 

@@ -10,10 +10,10 @@ use Tools\JsBundle\Component\Entity\EntityReflection;
 use Tools\JsBundle\Component\Entity\EntityMapping;
 
 class ExportEntityCommand extends ContainerAwareCommand {
-    
-    const TRANS_ERROR_NAMESPACE             = "JsBundle.Commmand.ExportEntityCommand";
-    const ERROR_LANGUAGE_NOT_FOUND          = 1;
-    const ERROR_LANGUAGE_FORMAT             = 2;
+
+    const TRANS_ERROR_NAMESPACE = "JsBundle.Commmand.ExportEntityCommand";
+    const ERROR_LANGUAGE_NOT_FOUND = 1;
+    const ERROR_LANGUAGE_FORMAT = 2;
 
     /**
      * {@inheritdoc}
@@ -26,7 +26,6 @@ class ExportEntityCommand extends ContainerAwareCommand {
                 ->addArgument('output', InputArgument::OPTIONAL, 'Where you want to export your mapping?');
     }
 
-    
     /**
      * @param int $id
      * @param array $params
@@ -35,7 +34,7 @@ class ExportEntityCommand extends ContainerAwareCommand {
     private function translateError(int $id, array $params = array()): string {
         return $this->getContainer()->get('translator')->trans(EntityMapping::TRANS_ERROR_NAMESPACE . "." . $id, $params, 'errors');
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -51,20 +50,17 @@ class ExportEntityCommand extends ContainerAwareCommand {
             $output->writeln($this->translateError(self::ERROR_LANGUAGE_FORMAT));
             return false;
         }
-      
-        try{
 
-             $entityInstance  = new EntityReflection($input->getArgument('entity'),$this->getContainer()->get('translator'),$this->getContainer()->get('validator'), $this->getContainer()->get("doctrine")->getManager());
-             
-             $entity = new EntityMapping($entityInstance,$languages);
-             $entity->checkAllAsserts();
-             $output->writeln(json_encode($entity->exportAllAsserts()));
+        try {
 
-             
+            $entityInstance = new EntityReflection($input->getArgument('entity'), $this->getContainer()->get('translator'), $this->getContainer()->get('validator'), $this->getContainer()->get("doctrine")->getManager());
+
+            $entity = new EntityMapping($entityInstance, $languages, true);
+
+            $output->writeln(json_encode($entity->exportAllAsserts()));
         } catch (Exception $e) {
-             $output->writeln($this->translateEntityError($e->getMessage()));
+            $output->writeln($this->translateEntityError($e->getMessage()));
         }
-       
     }
 
 }
