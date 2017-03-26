@@ -1,0 +1,24 @@
+ #  TEMPLATE    
+article_twig_add:
+    path: /add
+    methods:  [GET]
+    defaults: 
+        _controller: "CmsBlogBundle:Article:addTwig" 
+        maxAge: 86400
+        sharedMaxAge: 86400
+ 
+article_twig_list:
+    path: /list
+    methods:  [GET]
+    defaults: 
+        _controller: "CmsBlogBundle:Article:listTwig" 
+        maxAge: 86400
+        sharedMaxAge: 86400
+        
+article_twig_update:
+    path: /update
+    methods:  [GET]
+    defaults: 
+        _controller: "CmsBlogBundle:Article:updateTwig" 
+        maxAge: 86400
+        sharedMaxAge: 86400

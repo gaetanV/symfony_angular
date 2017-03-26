@@ -1,0 +1,27 @@
+validator:
+    match:
+        password: Passwords must match
+    regex:   
+        oneChar: This value should  contain a letter
+        oneInt: This value should  contain a number
+        email: This email  is not in the right format
+    getters:
+        passwordLegal: Your email and your email should be different
+
+Password: Password
+Password.repeat: Password (repeat)
+
+error :
+   email: Email can't be send  
+   BD: Data base request error
+   
+file:
+    add: add picture
+    list: pictures list
+user:
+    add: add user
+    list: users list
+    
+gallery:
+    add: add gallery
+    list: gallery list

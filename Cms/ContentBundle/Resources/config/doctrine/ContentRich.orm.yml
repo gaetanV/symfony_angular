@@ -1,0 +1,33 @@
+Cms\ContentBundle\Entity\ContentRich:
+    type: entity
+    table: Content_Rich
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO 
+    fields: ~
+    
+    #manyToMany: TO DO INSCRIPTION EVENT
+        #files:
+        #  targetEntity: File
+      #    joinTable:
+          #  name: content_rich_files
+
+    
+    oneToMany:
+        translations:
+            targetEntity: TranslationRich
+            cascade:      [persist]
+            mappedBy: content
+            orderBy:
+                 id: ASC
+          
+    lifecycleCallbacks: {  }
+
+       
+          
+     
+    
+    

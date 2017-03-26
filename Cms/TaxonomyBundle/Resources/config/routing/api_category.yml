@@ -1,0 +1,29 @@
+ #  DATA    
+category_getAll:
+    path:  /
+    methods:  [GET]
+    defaults: 
+        _controller: "CmsTaxonomyBundle:Category:getAll"
+category_getOne:
+    path:     /{id}/
+    defaults: { _controller: "CmsTaxonomyBundle:Category:getOne" }
+    methods:  [GET]
+
+
+#  ACTION     
+category_add:
+    path: /
+    methods:  [POST]
+    defaults: 
+        _controller: "CmsTaxonomyBundle:Category:add" 
+        
+category_update:
+    path:     /{id}/
+    defaults: { _controller: "CmsTaxonomyBundle:Category:update" }
+    methods:  [POST]
+    
+category_delete:
+    path:     /{id}/
+    defaults: { _controller: "CmsTaxonomyBundle:Category:delete" }
+    methods:  [DELETE]
+    

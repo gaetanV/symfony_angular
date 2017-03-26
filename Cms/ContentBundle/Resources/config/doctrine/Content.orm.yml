@@ -1,0 +1,25 @@
+Cms\ContentBundle\Entity\Content:
+    type: entity
+    table: Content
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO 
+    fields: ~
+    oneToMany:
+        translations:
+            targetEntity: Translation
+            cascade:      [persist]
+            mappedBy: content
+            orderBy:
+                 id: ASC
+          
+    lifecycleCallbacks: {  }
+
+       
+          
+     
+    
+    

@@ -1,0 +1,7 @@
+api_user:
+    resource: "@CmsUserBundle/Resources/config/routing/api_user.yml"
+    prefix:   %api%/user
+    
+admin_user:
+    resource: "@CmsUserBundle/Resources/config/routing/admin_user.yml"
+    prefix:   %admin%/user

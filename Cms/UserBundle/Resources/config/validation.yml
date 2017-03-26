@@ -1,0 +1,43 @@
+Cms\UserBundle\Entity\User:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: username
+    properties:
+        username:
+             - NotBlank: ~
+             - Regex:
+                pattern: "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-zA-Z]{2,4}/"
+                match:   true
+                message: validator.regex.email  
+        password:
+             - NotBlank: ~
+             - Regex:
+                pattern: "/[0-9]+/"
+                match:   true
+                message: validator.regex.oneInt
+                groups: [create] 
+             - Regex:
+                pattern: "/[a-zA-Z]+/"
+                match:   true
+                message: validator.regex.oneChar   
+                groups: [create] 
+             - Length:
+                min: 5
+                max: 12
+                groups: [create] 
+    getters:
+        passwordLegal:
+            - "True": 
+                message: validator.getters.passwordLegal
+                groups: [create] 
+  
+            
+
+                 
+
+    
+             
+               
+           
+
+    
+     

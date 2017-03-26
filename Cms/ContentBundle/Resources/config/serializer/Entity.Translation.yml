@@ -1,0 +1,7 @@
+Cms\ContentBundle\Entity\Translation:
+      exclusion_policy: ALL
+      properties:
+          value: ~
+          langage: ~
+
+

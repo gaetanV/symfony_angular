@@ -1,0 +1,33 @@
+ #  DATA    
+gallery_getAll:
+    path:  /
+    methods:  [GET]
+    defaults: 
+        _controller: "CmsFileBundle:Gallery:getAll"
+gallery_getOne:
+    path:     /{id}/
+    defaults: { _controller: "CmsFileBundle:Gallery:getOne" }
+    methods:  [GET]
+
+#  ACTION     
+gallery_add:
+    path: /
+    methods:  [POST]
+    defaults: 
+        _controller: "CmsFileBundle:Gallery:add" 
+
+gallery_update:
+    path:     /{id}/
+    defaults: { _controller: "CmsFileBundle:Gallery:update" }
+    methods:  [POST]
+    
+gallery_delete:
+    path:     /{id}/
+    defaults: { _controller: "CmsFileBundle:Gallery:delete" }
+    methods:  [DELETE]
+    
+gallery_add_file:
+    path: /addFile
+    methods:  [POST]
+    defaults: 
+        _controller: "CmsFileBundle:Gallery:add" 

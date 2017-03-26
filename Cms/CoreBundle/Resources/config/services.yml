@@ -1,0 +1,7 @@
+services:
+    Angular:
+        class: Tools\AngularBundle\Services\AngularService
+        calls:
+             - [ setContainer,[ @service_container ] ]
+
+    

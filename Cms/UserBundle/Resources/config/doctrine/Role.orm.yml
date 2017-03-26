@@ -1,0 +1,31 @@
+Cms\UserBundle\Entity\Role:
+    type: entity
+    table: Role
+    
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        type:
+          type: integer
+#   id:
+ #       type:
+  #        type: integer
+  #      user:
+    #       associationKey: true
+
+    manyToOne:
+        user:
+          targetEntity: User
+          inversedBy: roles    
+            
+    lifecycleCallbacks: {  }
+
+       
+          
+     
+    
+    

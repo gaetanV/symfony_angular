@@ -1,0 +1,9 @@
+Cms\UserBundle\Entity\User:
+      exclusion_policy: ALL
+      properties:
+          id:
+              groups: [list]
+          username:
+              groups: [list]
+          roles: 
+              groups: [list]

@@ -1,0 +1,16 @@
+Cms\ContentBundle\Entity\Translation:
+    properties:
+        value:
+           - NotBlank: ~
+           
+Cms\ContentBundle\Entity\TranslationRich:
+    properties:
+        value:
+           - NotBlank: ~
+    
+             
+               
+           
+
+    
+     

@@ -1,0 +1,28 @@
+ #  DATA    
+article_getAll:
+    path:  /
+    methods:  [GET]
+    defaults: 
+        _controller: "CmsBlogBundle:Article:getAll"
+article_getOne:
+    path:     /{id}/
+    defaults: { _controller: "CmsBlogBundle:Article:getOne" }
+    methods:  [GET]
+
+#  ACTION     
+article_add:
+    path: /
+    methods:  [POST]
+    defaults: 
+        _controller: "CmsBlogBundle:Article:add" 
+        
+article_update:
+    path:     /{id}/
+    defaults: { _controller: "CmsBlogBundle:Article:update" }
+    methods:  [POST]
+    
+article_delete:
+    path:     /{id}/
+    defaults: { _controller: "CmsBlogBundle:Article:delete" }
+    methods:  [DELETE]
+    

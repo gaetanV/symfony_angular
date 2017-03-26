@@ -1,0 +1,7 @@
+Cms\FileBundle\Entity\Gallery:
+      exclusion_policy: ALL
+      properties:
+           id: ~
+           name:  ~
+           files: ~
+

@@ -1,0 +1,10 @@
+Cms\TaxonomyBundle\Entity\Category:
+      exclusion_policy: ALL
+      properties:
+          id:  
+              groups: [single,children]
+          name: 
+              groups: [single,children]
+          children: 
+              groups: [children]
+

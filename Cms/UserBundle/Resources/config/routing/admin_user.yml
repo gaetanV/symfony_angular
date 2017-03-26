@@ -1,0 +1,26 @@
+  #  TEMPLATE
+user_twig_add:
+    path: /add
+    methods:  [GET]
+    defaults: 
+        _controller: "CmsUserBundle:User:addTwig" 
+        maxAge: 86400
+        sharedMaxAge: 86400
+
+user_twig_update:
+    path: /update
+    methods:  [GET]
+    defaults: 
+        _controller: "CmsUserBundle:User:updateTwig" 
+        maxAge: 86400
+        sharedMaxAge: 86400
+
+user_twig_list:
+    path: /list
+    methods:  [GET]
+    defaults: 
+        _controller: FrameworkBundle:Template:template
+        template: 'CmsUserBundle:User:list.html.twig'
+        maxAge: 86400
+        sharedMaxAge: 86400
+

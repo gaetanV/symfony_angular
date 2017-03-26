@@ -1,0 +1,32 @@
+Cms\UserBundle\Entity\User:
+    type: entity
+    table: User
+    uniqueConstraints:
+        uniqueConstraint:
+            columns: [username]
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        username:
+            type: string
+            length: '60'
+        password:
+            type: string
+            length: '80'
+
+               
+    oneToMany:
+         roles:
+             targetEntity: Role
+             cascade:      [persist]
+             mappedBy: user
+           
+
+            
+    lifecycleCallbacks:   
+          preUpdate : [ preEncodePass ]
+          prePersist : [ preEncodePass ]

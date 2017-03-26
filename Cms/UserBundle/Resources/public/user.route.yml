@@ -1,0 +1,21 @@
+user_list:
+    path: /user.html
+    methods:  [GET]
+    defaults:
+        _controller: "CmsUserBundle:User:addTwig" 
+        angular:
+            template: 'CmsUserBundle:User:list.html.twig'
+            templateUrl: /app/user/list
+            controller: userList
+            
+
+user_update:
+    path: /user/{id}/index.html
+    methods:  [GET]
+    defaults:
+        _controller: "CmsUserBundle:User:addTwig" 
+        angular:
+            template: 'CmsUserBundle:User:list.html.twig'
+            templateUrl: /app/user/add
+            controller: userAdd
+            

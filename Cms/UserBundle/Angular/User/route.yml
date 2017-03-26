@@ -1,0 +1,22 @@
+user_list:
+    path: /
+    methods:  [GET]
+    defaults:
+        angular:
+            template: /views/list.html.twig
+            controller: userList
+
+user_update:
+    path: /{id}/
+    methods:  [GET]
+    defaults:
+        angular:    
+            template: /views/add.html.twig
+            controller: userAdd
+            inject:
+                    form :
+                        type: formAngular
+                        form: \Cms\UserBundle\Form\UserCreate
+                        entity: \Cms\UserBundle\Entity\User
+
+            

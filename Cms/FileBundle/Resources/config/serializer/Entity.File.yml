@@ -1,0 +1,10 @@
+Cms\FileBundle\Entity\File:
+      exclusion_policy: ALL
+      virtual_properties:
+            getAbsolutePath:
+                type: string
+      properties:
+           id: ~
+     
+
+

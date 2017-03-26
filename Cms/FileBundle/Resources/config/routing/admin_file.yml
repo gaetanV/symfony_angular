@@ -1,0 +1,26 @@
+ #  TEMPLATE    
+ 
+file_twig_list:
+    path: /list
+    methods:  [GET]
+    defaults: 
+        _controller: FrameworkBundle:Template:template
+        template: 'CmsFileBundle:File:list.html.twig'
+        maxAge: 86400
+        sharedMaxAge: 86400
+
+file_twig_add:
+    path: /add
+    methods:  [GET]
+    defaults: 
+        _controller: "CmsFileBundle:File:addTwig" 
+        maxAge: 86400
+        sharedMaxAge: 86400
+        
+file_twig_update:
+    path: /update
+    methods:  [GET]
+    defaults: 
+        _controller: "CmsFileBundle:File:updateTwig" 
+        maxAge: 86400
+        sharedMaxAge: 86400

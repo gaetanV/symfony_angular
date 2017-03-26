@@ -1,0 +1,63 @@
+Cms\BlogBundle\Entity\Article:
+    type: entity
+    table: Article
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO 
+    oneToOne:
+        title:
+             targetEntity: Cms\ContentBundle\Entity\Content
+             cascade:      [persist]
+             joinColumns: 
+                title_id:
+                    referencedColumnName: id
+                    onDelete: cascade  
+        description:
+             targetEntity: Cms\ContentBundle\Entity\Content
+             cascade:      [persist]
+             joinColumns: 
+                description_id:
+                    referencedColumnName: id
+                    onDelete: cascade 
+        content:
+             targetEntity: Cms\ContentBundle\Entity\ContentRich
+             cascade:      [persist]
+             joinColumns: 
+                content_id:
+                    referencedColumnName: id
+                    onDelete: cascade             
+        gallery:
+             targetEntity: Cms\FileBundle\Entity\Gallery
+             cascade:      [persist]
+             joinColumns: 
+                gallery_id:
+                    referencedColumnName: id
+                    onDelete: cascade  
+                
+    manyToMany:
+        category:
+            targetEntity: Cms\TaxonomyBundle\Entity\Category
+          #  cascade:      [persist]
+          #  mappedBy: content
+            joinTable:
+                name: article_category
+                joinColumns:
+                  article_id:
+                    referencedColumnName: id
+                    onDelete: cascade
+                inverseJoinColumns:
+                   category_id:
+                    referencedColumnName: id
+                    onDelete: cascade
+                    
+                    
+    lifecycleCallbacks: {  }
+
+       
+          
+     
+    
+    

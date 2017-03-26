@@ -1,0 +1,17 @@
+namespace: app.user
+prefix: user
+js:
+        - controller/*.js
+        - service/*.js
+menu:
+        admin: 
+            user_list: user.list
+            user_update: user.update
+              
+   
+        
+        
+
+
+
+            

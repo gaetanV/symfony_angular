@@ -1,0 +1,31 @@
+<h1  ng-init=" $root.title='{% trans %}category.list{% endtrans %}' ">{% trans %}category.list{% endtrans %}</h1>
+
+<div ng-show="loading">
+    Loading
+</div>
+
+<div  ng-hide="loading">  
+  {{"{{data}}"}}
+     {{ form_start(form) }}
+    {% for translation in form.name.translations %}
+        {{ form_row(translation, {'label': translation.vars["value"].langage }) }}
+   
+    {% endfor %}
+{{ form(form) }} 
+{{ form_end(form) }}
+
+    <div  ng-drop="callback:  'push( $transport , list , $drag )' , constraint: 'isNotFirstDepth($drag)' ">Root</div>
+        <ul class="list-child" children-repeat="item in list track by children">
+                       <li >
+                         
+                               <a href="#category/{{"{{item.id}}"}}">+ </a>
+                             <div  ng-drag= "   transport : 'item'   "   ng-drop=" constraint: 'isNotChild(item,$transport)' , callback : 'pushChildren( $transport , item , $drag )'   "   >
+                                 {{"{{item.name}}"}} &nbsp;
+                             </div>
+                              
+                           </div>
+                        </li>
+                  </ul>
+    
+
+</div>

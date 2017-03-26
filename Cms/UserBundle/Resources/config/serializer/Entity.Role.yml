@@ -1,0 +1,7 @@
+Cms\UserBundle\Entity\Role:
+      exclusion_policy: ALL
+      virtual_properties:
+            getRole:
+                type: string
+
+

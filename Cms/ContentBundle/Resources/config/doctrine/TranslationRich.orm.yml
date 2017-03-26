@@ -1,0 +1,38 @@
+Cms\ContentBundle\Entity\TranslationRich:
+    type: entity
+    table: Translate_Rich
+    uniqueConstraints:
+        uniqueLangage:
+            columns: [contentRich_id,langage]
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        langage:
+            type: string
+            lenght: 10
+        value:
+            type: string
+            lenght: 255
+
+    manyToOne:
+        content:
+          targetEntity: ContentRich
+          cascade: [ persist ]
+          inversedBy: translations
+          joinColumn:
+            name: contentRich_id
+            referencedColumnName: id        
+            onDelete: cascade
+            
+            
+    lifecycleCallbacks: {  }
+
+       
+          
+     
+    
+    

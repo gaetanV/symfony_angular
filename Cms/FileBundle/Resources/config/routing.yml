@@ -1,0 +1,17 @@
+api_file:
+    resource: "@CmsFileBundle/Resources/config/routing/api_file.yml"
+    prefix:   api/file
+    
+api_gallery:
+    resource: "@CmsFileBundle/Resources/config/routing/api_gallery.yml"
+    prefix:   api/gallery
+    
+admin_file:
+    resource: "@CmsFileBundle/Resources/config/routing/admin_file.yml"
+    prefix:   admin/file
+    
+admin_gallery:
+    resource: "@CmsFileBundle/Resources/config/routing/admin_gallery.yml"
+    prefix:   admin/gallery
+
+        

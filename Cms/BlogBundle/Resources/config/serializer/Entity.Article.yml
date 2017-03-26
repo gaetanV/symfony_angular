@@ -1,0 +1,13 @@
+Cms\BlogBundle\Entity\Article:
+      exclusion_policy: ALL
+      discriminator:
+        field_name: category
+        map:
+            some-value: ClassName
+      properties:
+          id: ~
+          title:  ~
+          description:  ~
+          content: ~
+          category: ~
+          

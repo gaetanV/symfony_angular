@@ -1,0 +1,10 @@
+validator:
+    match:
+        password: Les mots de passe doivent correspondre
+    regex:   
+        oneChar: Cette valeur doit comporter au moins une lettre
+        oneInt: Cette valeur doit comporter au moins un chiffre
+        email: Cette email n'est pas au bon format
+   
+Password: Mot de passe
+Password.repeat: Mot de passe (répéter)

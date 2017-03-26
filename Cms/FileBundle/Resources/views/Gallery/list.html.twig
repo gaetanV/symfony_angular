@@ -1,0 +1,17 @@
+<h1  ng-init=" $root.title='{% trans %}gallery.list{% endtrans %}' ">{% trans %}gallery.list{% endtrans %}</h1>
+
+<div ng-show="loading">
+    Loading
+</div>
+<div  ng-hide="loading"> 
+    <ul >
+        <li ng-repeat="item in list">
+           <a href="#gallery/{{"{{item.id}}"}}">  {{"{{item.name}}"}}   <img style="width:25px;" ng-src="{{"{{$root.asset}}"}}{{"{{item.webPath}}"}}" /></a>
+            <div  ng-click="remove($index,item)">X</div>
+      
+        </li>
+    </ul>
+  
+</div>
+  
+{{ form(form) }} 

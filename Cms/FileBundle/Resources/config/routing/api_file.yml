@@ -1,0 +1,28 @@
+ #  DATA    
+file_getAll:
+    path:  /
+    methods:  [GET]
+    defaults: 
+        _controller: "CmsFileBundle:File:getAll"
+file_getOne:
+    path:     /{id}/
+    defaults: { _controller: "CmsFileBundle:File:getOne" }
+    methods:  [GET]
+
+#  ACTION     
+file_add:
+    path: /
+    methods:  [POST]
+    defaults: 
+        _controller: "CmsFileBundle:File:add" 
+        
+file_update:
+    path:     /{id}/
+    defaults: { _controller: "CmsFileBundle:File:update" }
+    methods:  [POST]
+    
+file_delete:
+    path:     /{id}/
+    defaults: { _controller: "CmsFileBundle:File:delete" }
+    methods:  [DELETE]
+    

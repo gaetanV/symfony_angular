@@ -1,0 +1,37 @@
+Cms\TaxonomyBundle\Entity\Category:
+    type: entity
+    table: Category
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO 
+    oneToOne:
+        name:
+             targetEntity: Cms\ContentBundle\Entity\Content
+             cascade:      [persist]
+             joinColumns: 
+                name_id:
+                    referencedColumnName: id
+                    onDelete: cascade  
+                
+    oneToMany:
+        children:
+            targetEntity: Category
+            mappedBy: parent
+
+    manyToOne:
+        parent:
+            targetEntity: Category
+            joinColumns:
+                   parent_ID:
+                    referencedColumnName: id
+
+    lifecycleCallbacks: {  }
+
+       
+          
+     
+    
+    

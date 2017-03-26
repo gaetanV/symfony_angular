@@ -1,0 +1,31 @@
+Cms\FileBundle\Entity\Gallery:
+    type: entity
+    table: Gallery
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+                
+    fields:
+        name:
+            type: string
+            length: 255
+
+    manyToMany:
+        files:
+          targetEntity: File
+          #mappedBy: gallerys
+          joinTable:
+            name: gallery_files
+            joinColumns:
+              gallery_id:
+                referencedColumnName: id
+                onDelete: cascade
+            inverseJoinColumns:
+               file_id:
+                referencedColumnName: id
+                onDelete: cascade
+          
+    lifecycleCallbacks: {  }

@@ -1,0 +1,9 @@
+api_article:
+    resource: "@CmsBlogBundle/Resources/config/routing/api_article.yml"
+    prefix:   api/article
+    
+    
+admin_article:
+    resource: "@CmsBlogBundle/Resources/config/routing/admin_article.yml"
+    prefix:   admin/article
+    

@@ -1,0 +1,9 @@
+services:
+
+    Controller.Content:
+        class: Cms\ContentBundle\Controller\ContentController
+        calls:
+             - [ setContainer,[ @service_container ] ]
+
+    
+        

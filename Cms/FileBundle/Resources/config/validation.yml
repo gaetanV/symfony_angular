@@ -1,0 +1,19 @@
+Cms\FileBundle\Entity\File:
+    properties:
+        file:
+            - NotBlank:
+                 groups: [create] 
+            - Image: 
+                maxSize: 77k
+                mimeTypes: [image/jpeg,image/png]
+                mimeTypesMessage: Please upload a valid (png | jpg)
+                
+Cms\FileBundle\Entity\Gallery:
+     properties:
+        name:
+           - NotBlank: ~
+        files:
+            - Collection: 
+                 fields:
+                     name: ~
+                 groups: [addFile] 

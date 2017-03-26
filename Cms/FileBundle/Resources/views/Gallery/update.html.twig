@@ -1,0 +1,23 @@
+<div  ng-controller="galleryUpdate">
+Page gallery
+<div ng-show="loading">
+    Loading
+</div>
+<div  ng-hide="loading">
+{# {{ form(form) }} #}
+
+
+{{ form(addFileForm) }}
+   <ul >
+        <li ng-repeat="item in files">
+
+            <img  ng-click="ck(item)" style="widh:25px;" ng-src="{{"{{$root.asset}}"}}{{"{{item.webPath}}"}}" />
+            
+            
+            <div  ng-click="remove($index,item)">X</div>
+        </li>
+    </ul>
+</div>
+</div>
+
+ 

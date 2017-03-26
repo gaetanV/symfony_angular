@@ -1,0 +1,38 @@
+Cms\ContentBundle\Entity\Translation:
+    type: entity
+    table: Translate
+    uniqueConstraints:
+        uniqueLangage:
+            columns: [content_id,langage]
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        langage:
+            type: string
+            lenght: 10
+        value:
+            type: string
+            lenght: 255
+
+    manyToOne:
+        content:
+          targetEntity: Content
+          cascade: [ persist ]
+          inversedBy: translations
+          joinColumn:
+            name: content_id
+            referencedColumnName: id        
+            onDelete: cascade
+            
+            
+    lifecycleCallbacks: {  }
+
+       
+          
+     
+    
+    

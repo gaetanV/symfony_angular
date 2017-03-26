@@ -1,0 +1,25 @@
+user_login:
+    path: /login
+    defaults: { _controller:  CmsUserBundle:User:login }
+    
+user_login_check:
+    path: /login_check
+ 
+user_logout:
+    pattern: /logout 
+    
+cms_admin:
+     path: /
+     methods:  [GET]
+     defaults: 
+        _controller: "CmsCoreBundle:Admin:index" 
+        maxAge: 86400
+        sharedMaxAge: 86400
+        
+cms_injection:
+     path: /{route}
+     methods:  [GET]
+     defaults: 
+        _controller: "CmsCoreBundle:Admin:injection" 
+     requirements:
+        route: ".+"

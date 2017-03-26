@@ -1,0 +1,24 @@
+ #  TEMPLATE    
+gallery_twig_list:
+    path: /list
+    methods:  [GET]
+    defaults: 
+        _controller: "CmsFileBundle:Gallery:addTwig" 
+        maxAge: 86400
+        sharedMaxAge: 86400
+
+gallery_twig_add:
+    path: /add
+    methods:  [GET]
+    defaults: 
+        _controller: "CmsFileBundle:Gallery:addTwig" 
+        maxAge: 86400
+        sharedMaxAge: 86400
+        
+gallery_twig_update:
+    path: /update
+    methods:  [GET]
+    defaults: 
+        _controller: "CmsFileBundle:Gallery:updateTwig" 
+        maxAge: 86400
+        sharedMaxAge: 86400

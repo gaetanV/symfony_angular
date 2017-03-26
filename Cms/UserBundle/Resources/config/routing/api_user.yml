@@ -1,0 +1,30 @@
+ #  DATA    
+user_getAll:
+    path:     /
+    defaults: { _controller: "CmsUserBundle:User:getAll" }
+    methods:  [GET]
+    
+user_getOne:
+    path:     /{id}/
+    defaults: { _controller: "CmsUserBundle:User:getOne" }
+    methods:  [GET]
+    requirements:
+        id: \d+
+
+ #  ACTION    
+user_add:
+    path:     /
+    defaults: { _controller: "CmsUserBundle:User:add" }
+    methods:  [POST]
+
+user_update:
+    path:     /{id}/
+    defaults: { _controller: "CmsUserBundle:User:update" }
+    methods:  [POST]
+
+user_delete:
+    path:     /{id}/
+    defaults: { _controller: "CmsUserBundle:User:delete" }
+    methods:  [DELETE]
+    
+   

@@ -1,0 +1,6 @@
+Cms\ContentBundle\Entity\Content:
+      exclusion_policy: ALL
+      properties:
+          id: ~
+          translations:  ~
+

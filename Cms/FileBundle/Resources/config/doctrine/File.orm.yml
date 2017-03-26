@@ -1,0 +1,33 @@
+Cms\FileBundle\Entity\File:
+    type: entity
+    table: File
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        path:
+            type: string
+            lenght: 255
+   
+   #       name_content_id:
+  #            type: integer
+            
+ #     oneToOne:
+  #      describe:
+     #         targetEntity: Content
+    #          joinColumns: 
+     #           content_id:
+       #           referencedColumnName: id
+       #           onDelete: cascade   
+        
+    lifecycleCallbacks:   
+          prePersist : [ preUpload, upload ]
+          postRemove: [ removeUpload ]
+       
+          
+     
+    
+    

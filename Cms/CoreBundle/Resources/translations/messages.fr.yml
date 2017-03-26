@@ -1,0 +1,31 @@
+validator:
+    match:
+        password: 'Les mots de passe doivent correspondre'
+    regex:
+        oneChar: 'Cette valeur doit comporter au moins une lettre'
+        oneInt: 'Cette valeur doit comporter au moins un chiffre'
+        email: 'Cette email n''est pas au bon format'
+    getters:
+        passwordLegal: Votre email et votre mot de passe doivent etre differents
+        
+Password: 'Mot de passe'
+Password.repeat: 'Mot de passe (répéter)'
+
+error :
+   email: L'Email n'a pas pu etre envoyé
+   BD: Erreur lors de la requet en base de donné
+        
+file:
+    add: 'Ajouter image'
+    list: 'Images'
+
+user:
+    add: ajouter un utilisateur
+    list: utilisateurs
+    
+gallery:
+    add: ajouter une gallery
+    list: gallery(s)
+    
+
+

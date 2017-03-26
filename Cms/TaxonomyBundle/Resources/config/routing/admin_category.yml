@@ -1,0 +1,16 @@
+ #  TEMPLATE    
+category_twig_list:
+    path: /list
+    methods:  [GET]
+    defaults: 
+        _controller: "CmsTaxonomyBundle:Category:listTwig" 
+        maxAge: 86400
+        sharedMaxAge: 86400
+        
+category_twig_update:
+    path: /update
+    methods:  [GET]
+    defaults: 
+        _controller: "CmsTaxonomyBundle:Category:updateTwig" 
+        maxAge: 86400
+        sharedMaxAge: 86400

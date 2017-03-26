@@ -1,0 +1,18 @@
+<h1  ng-init=" $root.title='{% trans %}user.add{% endtrans %}' ">{% trans %}user.add{% endtrans %}</h1>
+{{ form(form) }} 
+
+{#
+Data:{{"{{data}}"}}
+{{ form_start(form) }}
+<div>
+    
+{{ form_row(form.username) }}
+
+</div>
+<div>
+    
+    {{ form_row(form.password) }}
+</div>
+{{ form_end(form) }}
+//////////////////////
+{{ form_errors(form) }}#}

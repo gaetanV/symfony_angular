@@ -1,0 +1,23 @@
+Page File
+Data:{{"{{data}}"}}
+<div ng-show="loading">
+    Loading
+</div>
+<div  ng-hide="loading">
+
+    {{ form_start(form) }}
+    {% for translation in form.translations %}
+       
+        {{ form_row(translation, {'label': translation.vars["value"].langage }) }}
+    {% endfor %}
+<!--<input id="FileUpdate_translations_1_value" 
+       class="ng-pristine ng-untouched ng-valid"
+       type="text" required="required" init-value="" 
+       ng-model="data.FileUpdate.translations[1].value" name="FileUpdate[translations][1][value]">-->
+    
+    
+    
+{{ form(form) }} 
+{{ form_end(form) }}
+<img ng-src="{{"{{$root.asset}}"}}{{"{{entity.webPath}}"}}" />
+</div>

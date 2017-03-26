@@ -1,0 +1,7 @@
+api_category:
+    resource: "@CmsTaxonomyBundle/Resources/config/routing/api_category.yml"
+    prefix:   api/category
+    
+admin_category:
+    resource: "@CmsTaxonomyBundle/Resources/config/routing/admin_category.yml"
+    prefix:   admin/category
