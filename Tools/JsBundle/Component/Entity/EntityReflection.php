@@ -55,6 +55,8 @@ final class EntityReflection {
         return $this->meta;
     }
 
+    
+
     /**
      * @param string $propertyName
      * @return type

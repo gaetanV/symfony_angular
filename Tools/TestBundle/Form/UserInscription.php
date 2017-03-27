@@ -1,10 +1,10 @@
 <?php
-namespace Cms\BlogBundle\Form;
+namespace Tools\TestBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class UserInscription extends AbstractType
 {
@@ -14,18 +14,25 @@ class UserInscription extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        var_dump($options["style"]);
+        var_dump($options["component"]);
         $builder
                 ->add('username')
-                ->add('email');
+                ->add('email')
+                ->add('error',TextType::class);
     }
     
     /**
      * @param OptionsResolverInterface $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function setDefaultOptions(OptionsResolver $resolver)
     {
+
         $resolver->setDefaults(array(
-            'data_class' => 'Tools\TestBundle\Entity\User'
+            'data_class' => 'Tools\TestBundle\Entity\User',
+            'extra_fields' => array("error"),
+            'style'=> "style", 
+            'component'=> "component"
         ));
     }
 

@@ -201,10 +201,7 @@ final class EntityMapping extends EntityCheck {
         $response->definition = $definition;
         return $response;
     }
-    
-       
-    
-    
+   
     public function exportAsserts(string $propertyName): \stdClass {
         $response = new \stdClass;
         $property = $this->entity->getPropertyAsserts($propertyName);
