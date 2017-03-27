@@ -13,14 +13,8 @@ class ToolsJsExtension extends Extension {
      */
     public function load(array $configs, ContainerBuilder $container) {
         $container
-                ->register('js.form', 'Tools\JsBundle\Services\FormService');
-        
-        $container
-                ->register('js.entity', 'Tools\JsBundle\Services\EntityService');
-        
-        $container
-                ->register('js.tools', 'Tools\JsBundle\Services\ToolsService')
-                ->addArgument(new Reference('translator'));
+                ->register('js.languages', 'Tools\JsBundle\Services\LanguagesService')
+                ->addArgument('%_locale%');
     }
 
 }

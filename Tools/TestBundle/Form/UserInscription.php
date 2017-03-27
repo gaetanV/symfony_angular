@@ -22,6 +22,7 @@ class UserInscription extends AbstractType
                 ->add('error',TextType::class);
     }
     
+  
     /**
      * @param OptionsResolverInterface $resolver
      */
@@ -35,7 +36,9 @@ class UserInscription extends AbstractType
             'component'=> "component"
         ));
     }
-
+    
+    
+    
     /**
      * @return string
      */

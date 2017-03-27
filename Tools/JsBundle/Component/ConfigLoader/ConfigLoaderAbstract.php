@@ -16,6 +16,7 @@ abstract class ConfigLoaderAbstract implements ConfigLoaderInterface {
     private $forms = array();
 
     /**
+     * 
      * Init the Config master file
      * @param string $bundleAlias
      * @param FileLocator $fileLocator

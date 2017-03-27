@@ -2,33 +2,37 @@
 
 namespace Tools\JsBundle\Component\Generator;
 
-use Tools\JsBundle\Component\Entity\EntityReflection;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\Translation\DataCollectorTranslator;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
-use Doctrine\ORM\EntityManager;
+use Tools\JsBundle\Component\Translator\TranslatorInterface;
+use Tools\JsBundle\Component\Entity\EntityReflection;
 
-final class FormValidator {
-
-    const TRANS_ERROR_NAMESPACE = "JsBundle.Component.Entity.FormValidator";
+final class FormValidator implements TranslatorInterface{
+    
+    use \Tools\JsBundle\Component\Translator\TranslatorErrorTrait;
+    
+   
     const ERROR_CONSTRAINT_NOT_FOUND = 1;
 
     private $entities = [];
     private $imports = [
         "asserts" => [],
     ];
+    private $translator;
 
     /**
      * @param array $form
      * @throws \Exception
      */
     public function __construct(array $form, DataCollectorTranslator $translator, RecursiveValidator $validator, EntityManager $em) {
-
+           
+        $this->translator = $translator;
         foreach ($form["entityField"] as $entityAlias => $fields) {
 
             $fields = (array) $fields;
-            $entityAlias =  str_replace("/","\\",$entityAlias);
-            $this->entities[]  = new EntityReflection($entityAlias, $translator, $validator, $em);
-
+            $entityAlias = str_replace("/", "\\", $entityAlias);
+            $this->entities[] = new EntityReflection($entityAlias, $translator, $validator, $em);
         }
 
         foreach ($form["extraField"] as $field => $asserts) {
@@ -37,17 +41,30 @@ final class FormValidator {
                 if (class_exists($import)) {
                     $this->imports["asserts"][$assert] = $import;
                 } else {
-                    throw new \Exception(SELF::ERROR_CONSTRAINT_NOT_FOUND);
+                    throw new \Exception($this->transError(SELF::ERROR_CONSTRAINT_NOT_FOUND, array("{{ constraint }}" => $import)));
                 }
             }
         }
     }
+
+    /**
+    * {@inheritdoc}
+    */
+    public function getTranslator(): DataCollectorTranslator {
+        return $this->translator;
+    }
     
-    public function getImports() {
+    /**
+     * @return array
+     */
+    public function getImports(): array {
         return $this->imports;
     }
 
-    public function getEntities() {
+    /**
+     * @return array
+     */
+    public function getEntities(): array {
         return $this->entities;
     }
 

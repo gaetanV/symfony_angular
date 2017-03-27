@@ -1,24 +1,23 @@
-JsBundle:
-    Commmand:
-        ExportBreezeCommand:
-            1: Le parameters _locale doit être précisé
-            2: Le parameters _locale doit être un array
-    Component:
-        Generator:
-            FormValidator:
-                1: La contrainte {{ constraint }} n'éxiste pas
-        Entity:
-            EntityReflection:
-                1: L'entité {{ entity }} n'éxiste pas
-                2: La propriété {{ property }} n'éxiste pas
-            EntityMapping:
-                1: La contrainte {{ constraint }} n'est pas encore supporté, veuillez contacter votre administrateur
-                2: La contrainte {{ constraint }} est déprecié, veuillez contacter votre administrateur
-                3: La contrainte {{ constraint }} est dupliqué
-            EntityCheck:
-                1: Max size {{ max_size }} est plus grand que la configuration php {{ upload_max_filesize }}, veuillez contacter votre administrateur
-                2: La taille de Min size {{ min_size }} est plus grand que la taille de Max size {{ max_size }}
-                3: La limit de debut {{ min_range }} est plus grand que la limite de fin {{ max_range }}
-                4: La contrainte {{ constraint }} n'est pas valide pour ce type {{ type }}
-                5: La validation de la contrainte {{ constraint }} n'est pas encore supporté, veuillez contacter votre administrateur
-                6: Max range {{ max_range }} est plus grand que la taille de la configuration de la base de donnée {{ length }} 
+Tools\JsBundle\Component\Generator\FormValidator:
+    1: La contrainte {{ constraint }} n'éxiste pas
+    
+Tools\JsBundle\Component\Entity\EntityReflection:
+    1: L'entité {{ entity }} n'éxiste pas
+    2: La propriété {{ property }} n'éxiste pas
+    
+Tools\JsBundle\Component\Entity\EntityCheck:
+    1: Max size {{ max_size }} est plus grand que la configuration php {{ upload_max_filesize }}, veuillez contacter votre administrateur
+    2: La taille de Min size {{ min_size }} est plus grand que la taille de Max size {{ max_size }}
+    3: La limit de debut {{ min_range }} est plus grand que la limite de fin {{ max_range }}
+    4: La contrainte {{ constraint }} n'est pas valide pour ce type {{ type }}
+    5: La validation de la contrainte {{ constraint }} n'est pas encore supporté, veuillez contacter votre administrateur
+    6: Max range {{ max_range }} est plus grand que la taille de la configuration de la base de donnée {{ length }} 
+    
+Tools\JsBundle\Component\Entity\EntityMapping:
+    1: La contrainte {{ constraint }} n'est pas encore supporté, veuillez contacter votre administrateur
+    2: La contrainte {{ constraint }} est déprecié, veuillez contacter votre administrateur
+    3: La contrainte {{ constraint }} est dupliqué             
+                
+Tools\JsBundle\Component\Form\FormReflection:
+    1: La propriété {{ property }} n'éxiste pas
+    

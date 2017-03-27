@@ -2,15 +2,19 @@
 
 namespace Tools\JsBundle\Component\Entity;
 
+use Doctrine\ORM\Mapping\ClassMetadata as OrmClassMetadata;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
 use Symfony\Component\Translation\DataCollectorTranslator;
 use Symfony\Component\Validator\Mapping\ClassMetadata as SymfonyClassMetadata;
-use Doctrine\ORM\Mapping\ClassMetadata as OrmClassMetadata;
-use Doctrine\ORM\EntityManager;
 
-final class EntityReflection {
+use Tools\JsBundle\Component\Translator\TranslatorInterface;
 
-    const TRANS_ERROR_NAMESPACE = "JsBundle.Component.Entity.EntityReflection";
+
+final class EntityReflection implements TranslatorInterface {
+
+    use \Tools\JsBundle\Component\Translator\TranslatorErrorTrait;
+    
     const ERROR_ENTITY_NOT_FOUND = 1;
     const ERROR_PROPERTY_NOT_FOUND = 2;
 
@@ -22,17 +26,26 @@ final class EntityReflection {
     private $entityAlias;
     
     public function __construct(string $entityAlias, DataCollectorTranslator $translator, RecursiveValidator $validator, EntityManager $em) {
+        
         $this->entityAlias = $entityAlias;
         $this->em = $em;
         $this->translator = $translator;
         if (!class_exists($entityAlias)) {
-            throw new \Exception($this->translateError(EntityReflection::ERROR_ENTITY_NOT_FOUND, array('{{ entity }}' => $entityAlias)));
+            throw new \Exception($this->transError(SELF::ERROR_ENTITY_NOT_FOUND, array('{{ entity }}' => $entityAlias)));
         }
         $entity = new $entityAlias();
         $this->instance = $entity;
         $this->asserts = $validator->getMetadataFor($this->instance);
+        
     }
     
+    /**
+    * {@inheritdoc}
+    */
+    public function getTranslator(): DataCollectorTranslator {
+        return $this->translator;
+    }
+
     
     public function getName(){
         return $this->entityAlias;
@@ -55,8 +68,6 @@ final class EntityReflection {
         return $this->meta;
     }
 
-    
-
     /**
      * @param string $propertyName
      * @return type
@@ -64,7 +75,7 @@ final class EntityReflection {
      */
     public function getPropertyAsserts(string $propertyName) {
         if (!isset($this->asserts->properties[$propertyName])) {
-            throw new \Exception($this->translateError(EntityReflection::ERROR_PROPERTY_NOT_FOUND, array('{{ property }}' => $propertyName)));
+            throw new \Exception($this->transError(SELF::ERROR_PROPERTY_NOT_FOUND, array('{{ property }}' => $propertyName)));
         }
         return $this->asserts->properties[$propertyName];
     }
@@ -77,18 +88,11 @@ final class EntityReflection {
     public function getPropertyMetaData(string $propertyName): array {
         $response = $this->getMetadata()->fieldMappings[$propertyName];
         if (!isset($response)) {
-            throw new \Exception($this->translateError(EntityReflection::ERROR_PROPERTY_NOT_FOUND, array('{{ property }}' => $propertyName)));
+            throw new \Exception($this->transError(SELF::ERROR_PROPERTY_NOT_FOUND, array('{{ property }}' => $propertyName)));
         }
         return $response;
     }
 
-    /**
-     * @param int $id
-     * @param array $params
-     * @return string
-     */
-    private function translateError(int $id, array $params = array()): string {
-        return $this->translator->trans(EntityReflection::TRANS_ERROR_NAMESPACE . "." . $id, $params, 'errors');
-    }
+ 
 
 }

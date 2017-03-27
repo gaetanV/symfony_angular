@@ -41,13 +41,14 @@ class DeployServiceCommand extends ContainerAwareCommand {
             $formGenerator = new GeneratorForm($this->getContainer()->get('templating'), $this->getContainer()->get('validator'));
 
             foreach ($configLoader->getForms() as $form) {
-                $formGenerator->deploy(new FormValidator((array) $form, $this->getContainer()->get('translator'),$this->getContainer()->get('validator'),$this->getContainer()->get("doctrine")->getManager()));
+                $formGenerator->deploy(new FormValidator((array) $form, $this->getContainer()->get('translator'), $this->getContainer()->get('validator'), $this->getContainer()->get("doctrine")->getManager()));
             }
 
             $output->writeln("complet");
         } catch (Exception $e) {
             $output->writeln($e->getMessage());
         }
+        
     }
 
 }

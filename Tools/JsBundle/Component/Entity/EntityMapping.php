@@ -3,22 +3,25 @@
 namespace Tools\JsBundle\Component\Entity;
 
 use Symfony\Component\Validator\Constraint;
-use Tools\JsBundle\Component\Entity\EntityReflection;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Translation\DataCollectorTranslator;
+use Tools\JsBundle\Component\Entity\EntityReflection;
+use Tools\JsBundle\Component\Translator\TranslatorInterface;
 
 /**
  * @reference   : http://symfony.com/doc/current/validation.html
  * @depreciated : Validator Groupe 
  * @TODO        : Recursive collection
  */
-final class EntityMapping extends EntityCheck {
+final class EntityMapping extends EntityCheck implements TranslatorInterface {
+
+    use \Tools\JsBundle\Component\Translator\TranslatorErrorTrait;
 
     protected $entity;
     protected $languages;
     protected $strict = false;
 
-    const TRANS_ERROR_NAMESPACE = "JsBundle.Component.Entity.EntityMapping";
     const ERROR_CONSTRAINT_NOT_SUPPORTED = 1;
     const ERROR_CONSTRAINT_DEPRECIATED = 2;
     const ERROR_CONSTRAINT_DUPLICATED = 3;
@@ -28,6 +31,7 @@ final class EntityMapping extends EntityCheck {
      * @param array $languages
      */
     public function __construct(EntityReflection $entity, array $languages, bool $strict = false) {
+
         $this->strict = $strict;
         $this->entity = $entity;
         $this->languages = $languages;
@@ -35,14 +39,13 @@ final class EntityMapping extends EntityCheck {
     }
 
     /**
-     * @param int $id
-     * @param array $params
-     * @return string
+     * {@inheritdoc}
      */
-    private function translateError(int $id, array $params = array()): string {
-        return $this->entity->translator->trans(EntityMapping::TRANS_ERROR_NAMESPACE . "." . $id, $params, 'errors');
+    public function getTranslator(): DataCollectorTranslator {
+        return $this->entity->translator;
     }
 
+  
     /**
      * 
      * @param string $messagePattern
@@ -192,16 +195,16 @@ final class EntityMapping extends EntityCheck {
             case "Expression":
             case "All":
             case "Valid":
-                throw new \Exception($this->translateError(EntityMapping::ERROR_CONSTRAINT_DEPRECIATED, array('{{ constraint }}' => $name)));
+                throw new \Exception($this->transError(SELF::ERROR_CONSTRAINT_DEPRECIATED, array('{{ constraint }}' => $name)));
             default :
-                throw new \Exception($this->translateError(EntityMapping::ERROR_CONSTRAINT_NOT_SUPPORTED, array('{{ constraint }}' => $name)));
+                throw new \Exception($this->transError(SELF::ERROR_CONSTRAINT_NOT_SUPPORTED, array('{{ constraint }}' => $name)));
         }
         $response = new \stdClass();
         $response->name = $name;
         $response->definition = $definition;
         return $response;
     }
-   
+
     public function exportAsserts(string $propertyName): \stdClass {
         $response = new \stdClass;
         $property = $this->entity->getPropertyAsserts($propertyName);
@@ -217,7 +220,7 @@ final class EntityMapping extends EntityCheck {
                     break;
                 default:
                     if (isset($response->{$assert->name})) {
-                        throw new \Exception($this->translateError(EntityMapping::ERROR_CONSTRAINT_DUPLICATED, array('{{ constraint }}' => $assert->name)));
+                        throw new \Exception($this->transError(SELF::ERROR_CONSTRAINT_DUPLICATED, array('{{ constraint }}' => $assert->name)));
                     }
                     $response->{$assert->name} = $assert->definition;
             }
@@ -229,7 +232,7 @@ final class EntityMapping extends EntityCheck {
             if (!$case1 || !$case2) {
                 $metadata = $this->entity->getPropertyMetaData($propertyName);
                 if (!$case1) {
-                    $assert = $this->parseAssert(new Length(array('max' => $metadata["length"],'min' => 0)));
+                    $assert = $this->parseAssert(new Length(array('max' => $metadata["length"], 'min' => 0)));
                     $response->{$assert->name} = $assert->definition;
                 }
                 if (!$case2) {

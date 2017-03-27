@@ -2,73 +2,108 @@
 
 namespace Tools\JsBundle\Component\Form;
 
-use Symfony\Component\Validator\Validator\RecursiveValidator;
-use Symfony\Component\Translation\DataCollectorTranslator;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\FormRegistry;
-use Tools\JsBundle\Component\Entity\EntityReflection;
-use Tools\JsBundle\Component\Entity\EntityMapping;
 use Symfony\Component\Form\FormFactory;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\DataCollectorTranslator;
+use Symfony\Component\Validator\Validator\RecursiveValidator;
+use Tools\JsBundle\Component\Translator\TranslatorInterface;
+use Tools\JsBundle\Component\Entity\EntityReflection;
 
-final class FormReflection {
+/**
+ * @TODO        : Children
+ */
+final class FormReflection implements TranslatorInterface {
+
+    use \Tools\JsBundle\Component\Translator\TranslatorErrorTrait;
+
+    const ERROR_PROPERTY_NOT_FOUND = 1;
 
     private $instance;
     private $formAlias;
-    private $languages;
     private $name;
-    private $entityName;
+    private $owner;
     private $entityFields = [];
+    private $extraFields = [];
+    public $translator;
 
-    const TRANS_ERROR_NAMESPACE = "JsBundle.Component.Form.FormReflection";
-    const ERROR_FORM_NOT_FOUND = 1;
-    const REQUIRED = ["data_class", "extra_fields"];
-    const EXTRA = ["style", "extra_fields" , "component"];
-    
-    public function __construct(string $formAlias, FormFactory $formFactory, FormRegistry $formRegistry, DataCollectorTranslator $translator, RecursiveValidator $validator, EntityManager $em, array $languages) {
+    const REQUIRED = ["data_class"];
 
+    /**
+     * @param string $formAlias
+     * @param FormFactory $formFactory
+     * @param FormRegistry $formRegistry
+     * @param DataCollectorTranslator $translator
+     * @param RecursiveValidator $validator
+     * @param EntityManager $em
+     */
+    public function __construct(string $formAlias, FormFactory $formFactory, FormRegistry $formRegistry, DataCollectorTranslator $translator, RecursiveValidator $validator, EntityManager $em) {
+
+        $this->translator = $translator;
         $type = $formRegistry->getType($formAlias);
-        $this->languages = $languages;
         $this->formAlias = $formAlias;
         $this->instance = $type;
         $formEntity = new $formAlias();
-
         $optionFormResolve = $type->getOptionsResolver();
         $optionFormResolve->setRequired(SELF::REQUIRED);
         $optionFormResolve->setDefault("extra_fields", array());
         $optionFormResolve->setDefault("style", false);
         $optionFormResolve->setDefault("component", false);
         $formEntity->setDefaultOptions($optionFormResolve);
+
         $formResolve = $optionFormResolve->resolve();
-        $entity = new EntityReflection($formResolve["data_class"], $translator, $validator, $em);
-        $this->entityName= $entity->getName();
-        $owner = new EntityMapping($entity, $languages, true);
+        $this->owner = new EntityReflection($formResolve["data_class"], $translator, $validator, $em);
+
+
         $push = $type->createBuilder($formFactory, $type->getBlockPrefix(), array());
         $type->buildForm($push, $formResolve);
-     
+
         $this->name = $formEntity->getName();
         foreach ($push->all() as $name => $field) {
-            if(in_array($name,$formResolve["extra_fields"])){
-                $this->extraFields[$name] = "todo";
-            }else{
-                $this->entityFields[$name] = $owner->exportAsserts($name);
+            if (in_array($name, $formResolve["extra_fields"])) {
+                $this->extraFields[] = $name;
+            } else {
+                if ($this->owner->getPropertyMetaData($name)) {
+                    $this->entityFields[] = $name;
+                } else {
+                    $this->trans(self::ERROR_PROPERTY_NOT_FOUND, array('{{ property }}' => $propertyName));
+                }
             }
         }
     }
 
-    public function getExtraFields() {
+    /**
+     * {@inheritdoc}
+     */
+    public function getTranslator(): DataCollectorTranslator {
+        return $this->translator;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExtraFields(): array {
         return $this->extraFields;
     }
-    
-    public function getEntityFields() {
+
+    /**
+     * @return array
+     */
+    public function getOwnerFields(): array {
         return $this->entityFields;
     }
 
-    public function getEntityName() {
-        return $this->entityName;
+    /**
+     * @return EntityReflection
+     */
+    public function getOwner(): EntityReflection {
+        return $this->owner;
     }
 
-    public function getName() {
+    /**
+     * @return string
+     */
+    public function getName(): string {
         return $this->name;
     }
 
