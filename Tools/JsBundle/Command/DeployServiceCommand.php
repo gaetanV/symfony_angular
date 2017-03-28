@@ -8,8 +8,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tools\JsBundle\Component\ConfigLoader\ConfigLoaderJson;
 use Tools\JsBundle\Component\ConfigLoader\ConfigLoaderYaml;
-use Tools\JsBundle\Component\Generator\GeneratorForm;
-use Tools\JsBundle\Component\Generator\FormValidator;
+use Tools\JsBundle\Component\Deployer\Builder;
+use Tools\JsBundle\Component\Deployer\Types\Validator;
 
 class DeployServiceCommand extends ContainerAwareCommand {
 
@@ -38,10 +38,14 @@ class DeployServiceCommand extends ContainerAwareCommand {
                     $configLoader = new ConfigLoaderJson($input->getArgument('bundle'), $this->getContainer()->get('file_locator'));
                     break;
             }
-            $formGenerator = new GeneratorForm($this->getContainer()->get('templating'), $this->getContainer()->get('validator'));
+            $buidler = new Builder($this->getContainer()->get('templating'),$this->getContainer()->get('js.core'));
 
             foreach ($configLoader->getForms() as $form) {
-                $formGenerator->deploy(new FormValidator((array) $form, $this->getContainer()->get('translator'), $this->getContainer()->get('validator'), $this->getContainer()->get("doctrine")->getManager()));
+                
+                $validator = new Validator((array) $form, $this->getContainer()->get('translator'), $this->getContainer()->get('validator'), $this->getContainer()->get("doctrine")->getManager());
+                $buidler->formMapping($validator);
+                $buidler->validator($validator);
+                
             }
 
             $output->writeln("complet");

@@ -1,7 +1,5 @@
 ```
 (c) Gaetan Vigneron <gaetan@webworkshops.fr>
- V 0.1.06
- 23/03/2017
 
 require PHP >= 7.0
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tools\JsBundle\Component\Generator;
+namespace Tools\JsBundle\Component\Deployer\Types;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Translation\DataCollectorTranslator;
@@ -8,10 +8,9 @@ use Symfony\Component\Validator\Validator\RecursiveValidator;
 use Tools\JsBundle\Component\Translator\TranslatorInterface;
 use Tools\JsBundle\Component\Entity\EntityReflection;
 
-final class FormValidator implements TranslatorInterface{
+final class Validator implements TranslatorInterface{
     
     use \Tools\JsBundle\Component\Translator\TranslatorErrorTrait;
-    
    
     const ERROR_CONSTRAINT_NOT_FOUND = 1;
 

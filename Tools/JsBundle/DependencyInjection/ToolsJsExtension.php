@@ -15,6 +15,10 @@ class ToolsJsExtension extends Extension {
         $container
                 ->register('js.languages', 'Tools\JsBundle\Services\LanguagesService')
                 ->addArgument('%_locale%');
+        
+        $container
+                ->register('js.core', 'Tools\JsBundle\Services\CoreInformationService');
+                
     }
 
 }
