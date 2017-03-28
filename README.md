@@ -1,5 +1,5 @@
 ```
-(c) Gaetan Vigneron <gaetan@webworkshops.fr>
+(c) Gaetan Vigneron 
 
 require PHP >= 7.0
 
