@@ -6,11 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Tools\JsBundle\Component\ConfigLoader\ConfigLoaderJson;
-use Tools\JsBundle\Component\ConfigLoader\ConfigLoaderYaml;
 use Tools\JsBundle\Component\Deployer\Builder;
 use Tools\JsBundle\Component\Deployer\Types\Validator;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class DeployServiceCommand extends ContainerAwareCommand {
 

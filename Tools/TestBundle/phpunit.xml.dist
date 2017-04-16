@@ -1,0 +1,10 @@
+<phpunit bootstrap="./../../../app/autoload.php">
+    <php>
+        <server name="KERNEL_DIR" value="./../../../app/" />
+    </php>
+    <testsuites>
+        <testsuite name="Js Bundle">
+            <directory>Test</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
