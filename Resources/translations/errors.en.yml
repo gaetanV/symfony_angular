@@ -1,0 +1,23 @@
+JsBundle\Component\Generator\FormValidator:
+    1: The Constraint {{ constraint }} is not found
+    
+JsBundle\Component\Entity\EntityReflection:
+    1: The entity {{ entity }} is not found
+    2: The property {{ property }} is not found
+    
+JsBundle\Component\Entity\EntityCheck:
+    1: Max size {{ max_size }} is greater than php allowed configuration {{ upload_max_filesize }} please call your administrator
+    2: Min size {{ min_size }} is greater than Max size {{ max_size }}
+    3: Min range {{ min_range }} is greater than Max range {{ max_range }}
+    4: Constraint {{ constraint }} is not valid for this type {{ type }}
+    5: Check Constraint {{ constraint }} is not yet supported please call your administrator
+    6: Max range {{ max_range }} is greater than allowed database configuration {{ length }}            
+                
+JsBundle\Component\Entity\EntityMapping:
+    1: Constraint {{ constraint }} is not yet supported please call your administrator
+    2: Constraint {{ constraint }} is depreciated please call your administrator 
+    3: Constraint {{ constraint }} is duplicated              
+                
+JsBundle\Component\Form\FormReflection:
+    1: The property {{ property }} is not found
+    

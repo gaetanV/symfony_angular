@@ -32,7 +32,7 @@ parameters:
     @Arguments Config Format [optionnal]
 
     Exemple :
-    php bin/console js:service ToolsTestBundle
+    php bin/console js:service TestBundle
 
 ```
 ```
@@ -44,7 +44,7 @@ parameters:
     @Arguments Output [optionnal] 
 
     Exemple :
-    php bin/console js:form \Tools\TestBundle\Form\UserInscription
+    php bin/console js:form JsBundle\TestBundle\Form\UserInscription
 
 ```
 ```
@@ -56,7 +56,7 @@ parameters:
     @Arguments Output [optionnal] 
 
     Exemple :
-    php bin/console js:entity \Tools\TestBundle\Entity\User 
+    php bin/console js:entity JsBundle\TestBundle\Entity\User 
 
 ```
 
