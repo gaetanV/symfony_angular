@@ -1,3 +1,4 @@
 /Tools/AngularBundle2015
 /Tools/test/
-/Tools/TestBundle/Symfony/Vendor
+/Tools/TestBundle/Deploy/vendor
+/Tools/TestBundle/Deploy/composer.lock

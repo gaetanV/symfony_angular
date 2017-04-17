@@ -1,6 +1,6 @@
-<phpunit bootstrap="../../../vendor/autoload.php">
+<phpunit bootstrap="./Deploy/vendor/autoload.php">
     <php>
-        <server name="KERNEL_DIR" value="./Symfony/" />
+        <server name="KERNEL_DIR" value="./Deploy/" />
     </php>
     <testsuites>
         <testsuite name="Js Bundle">
