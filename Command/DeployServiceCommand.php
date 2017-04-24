@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use JsBundle\Component\Deployer\Builder;
 use JsBundle\Component\Deployer\Types\Validator;
+use JsBundle\Component\Controller\ControllerReflection;
 
 class DeployServiceCommand extends ContainerAwareCommand {
 
@@ -28,7 +29,9 @@ class DeployServiceCommand extends ContainerAwareCommand {
     protected function execute(InputInterface $input, OutputInterface $output) {
         $kernel = $this->getContainer()->get('kernel');
         $bundle = $kernel->getBundle($input->getArgument('bundle'));
+       
         $bundle->shutdown();
+ 
         $extension = $bundle->getContainerExtension();
         try {
             $buidler = new Builder($this->getContainer()->get('templating'), $this->getContainer()->get('js.core'));
@@ -38,7 +41,9 @@ class DeployServiceCommand extends ContainerAwareCommand {
                 $buidler->formMapping($validator);
                 $buidler->validator($validator);
             }
-
+            foreach ($extension->deployServices() as $key => $service) {
+                $controller = new ControllerReflection($bundle,$key, true);
+            }
             $output->writeln("complet");
         } catch (Exception $e) {
             $output->writeln($e->getMessage());
