@@ -9,9 +9,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use JsBundle\Component\Form\FormReflection;
 use JsBundle\Component\Form\FormDeployer;
 
-class ExportFormCommand extends ContainerAwareCommand  {
-    
-   
+class ExportFormCommand extends ContainerAwareCommand {
+
     /**
      * {@inheritdoc}
      */
@@ -27,10 +26,9 @@ class ExportFormCommand extends ContainerAwareCommand  {
      * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
-   
         $languages = $this->getContainer()->get('js.languages')->getAll();
-        $form = new FormReflection($input->getArgument('form'), $this->getContainer()->get('form.factory'), $this->getContainer()->get('form.registry'), $this->getContainer()->get('translator'), $this->getContainer()->get('validator'), $this->getContainer()->get("doctrine")->getManager());
-        $formDeployer = new FormDeployer($form, $languages);
+        $form = new FormReflection($input->getArgument('form'), $this->getContainer()->get('form.factory'), $this->getContainer()->get('form.registry'), $this->getContainer()->get('validator'), $this->getContainer()->get("doctrine")->getManager());
+        $formDeployer = new FormDeployer($form, $this->getContainer()->get('translator'), $languages);
         $output->writeln(json_encode($formDeployer->build()));
     }
 

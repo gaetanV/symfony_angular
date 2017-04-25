@@ -5,19 +5,17 @@ namespace JsBundle\Component\Form;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\FormRegistry;
 use Symfony\Component\Form\FormFactory;
-use Symfony\Component\Translation\DataCollectorTranslator;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
-use JsBundle\Component\Translator\TranslatorInterface;
 use JsBundle\Component\Entity\EntityReflection;
 
 /**
  * @TODO        : Children
  */
-final class FormReflection implements TranslatorInterface {
+final class FormReflection {
 
-    use \JsBundle\Component\Translator\TranslatorErrorTrait;
 
-    const ERROR_PROPERTY_NOT_FOUND = 1;
+
+    const ERROR_PROPERTY_NOT_FOUND = "The property {{ property }} is not found";
 
     private $instance;
     private $formAlias;
@@ -25,7 +23,7 @@ final class FormReflection implements TranslatorInterface {
     private $owner;
     private $entityFields = [];
     private $extraFields = [];
-    public $translator;
+
 
     const REQUIRED = ["data_class"];
 
@@ -33,13 +31,12 @@ final class FormReflection implements TranslatorInterface {
      * @param string $formAlias
      * @param FormFactory $formFactory
      * @param FormRegistry $formRegistry
-     * @param DataCollectorTranslator $translator
      * @param RecursiveValidator $validator
      * @param EntityManager $em
      */
-    public function __construct(string $formAlias, FormFactory $formFactory, FormRegistry $formRegistry, DataCollectorTranslator $translator, RecursiveValidator $validator, EntityManager $em) {
+    public function __construct(string $formAlias, FormFactory $formFactory, FormRegistry $formRegistry,  RecursiveValidator $validator, EntityManager $em) {
 
-        $this->translator = $translator;
+       
         $type = $formRegistry->getType($formAlias);
         $this->formAlias = $formAlias;
         $this->instance = $type;
@@ -50,11 +47,8 @@ final class FormReflection implements TranslatorInterface {
         $optionFormResolve->setDefault("style", false);
         $optionFormResolve->setDefault("component", false);
         $formEntity->setDefaultOptions($optionFormResolve);
-
         $formResolve = $optionFormResolve->resolve();
-        $this->owner = new EntityReflection($formResolve["data_class"], $translator, $validator, $em);
-
-
+        $this->owner = new EntityReflection($formResolve["data_class"], $validator, $em);
         $push = $type->createBuilder($formFactory, $type->getBlockPrefix(), array());
         $type->buildForm($push, $formResolve);
 
@@ -66,17 +60,10 @@ final class FormReflection implements TranslatorInterface {
                 if ($this->owner->getPropertyMetaData($name)) {
                     $this->entityFields[] = $name;
                 } else {
-                    $this->trans(self::ERROR_PROPERTY_NOT_FOUND, array('{{ property }}' => $propertyName));
+                   throw new \Exception(strtr(self::ERROR_PROPERTY_NOT_FOUND, array('{{ property }}' => $propertyName)));
                 }
             }
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getTranslator(): DataCollectorTranslator {
-        return $this->translator;
     }
 
     /**

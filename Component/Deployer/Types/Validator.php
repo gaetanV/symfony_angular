@@ -5,14 +5,14 @@ namespace JsBundle\Component\Deployer\Types;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Translation\DataCollectorTranslator;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
-use JsBundle\Component\Translator\TranslatorInterface;
+
 use JsBundle\Component\Entity\EntityReflection;
 
-final class Validator implements TranslatorInterface{
+final class Validator  {
     
-    use \JsBundle\Component\Translator\TranslatorErrorTrait;
+
    
-    const ERROR_CONSTRAINT_NOT_FOUND = 1;
+    const ERROR_CONSTRAINT_NOT_FOUND = "The Constraint {{ constraint }} is not found";
 
     private $entities = [];
     private $imports = [
@@ -31,7 +31,7 @@ final class Validator implements TranslatorInterface{
 
             $fields = (array) $fields;
             $entityAlias = str_replace("/", "\\", $entityAlias);
-            $this->entities[] = new EntityReflection($entityAlias, $translator, $validator, $em);
+            $this->entities[] = new EntityReflection($entityAlias, $validator, $em);
         }
 
         foreach ($form["extraField"] as $field => $asserts) {
@@ -40,18 +40,13 @@ final class Validator implements TranslatorInterface{
                 if (class_exists($import)) {
                     $this->imports["asserts"][$assert] = $import;
                 } else {
-                    throw new \Exception($this->transError(SELF::ERROR_CONSTRAINT_NOT_FOUND, array("{{ constraint }}" => $import)));
+                    throw new \Exception(strtr(SELF::ERROR_CONSTRAINT_NOT_FOUND, array("{{ constraint }}" => $import)));
                 }
             }
         }
     }
 
-    /**
-    * {@inheritdoc}
-    */
-    public function getTranslator(): DataCollectorTranslator {
-        return $this->translator;
-    }
+
     
     /**
      * @return array

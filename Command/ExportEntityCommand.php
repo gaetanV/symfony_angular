@@ -32,13 +32,12 @@ class ExportEntityCommand extends ContainerAwareCommand {
         $languages = $this->getContainer()->get('js.languages')->getAll();
         try {
 
-            $entityInstance = new EntityReflection($input->getArgument('entity'), $this->getContainer()->get('translator'), $this->getContainer()->get('validator'), $this->getContainer()->get("doctrine")->getManager());
-            $entity = new EntityMapping($entityInstance, $languages, true);
+            $entityInstance = new EntityReflection($input->getArgument('entity'), $this->getContainer()->get('validator'), $this->getContainer()->get("doctrine")->getManager());
+            $entity = new EntityMapping($entityInstance, $this->getContainer()->get('translator'), $languages, true);
             $output->writeln(json_encode($entity->exportAllAsserts()));
         } catch (Exception $e) {
             $output->writeln($e->getMessage());
         }
-        
     }
 
 }

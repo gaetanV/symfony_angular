@@ -7,45 +7,36 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Translation\DataCollectorTranslator;
 use JsBundle\Component\Entity\EntityReflection;
-use JsBundle\Component\Translator\TranslatorInterface;
+
 
 /**
  * @reference   : http://symfony.com/doc/current/validation.html
  * @depreciated : Validator Groupe 
  * @TODO        : Recursive collection
  */
-final class EntityMapping extends EntityCheck implements TranslatorInterface {
+final class EntityMapping extends EntityCheck  {
 
-    use \JsBundle\Component\Translator\TranslatorErrorTrait;
-
+    private $translator;
     protected $entity;
     protected $languages;
     protected $strict = false;
 
-    const ERROR_CONSTRAINT_NOT_SUPPORTED = 1;
-    const ERROR_CONSTRAINT_DEPRECIATED = 2;
-    const ERROR_CONSTRAINT_DUPLICATED = 3;
+    const ERROR_CONSTRAINT_NOT_SUPPORTED = "Constraint {{ constraint }} is not yet supported please call your administrator";
+    const ERROR_CONSTRAINT_DEPRECIATED = "Constraint {{ constraint }} is depreciated please call your administrator ";
+    const ERROR_CONSTRAINT_DUPLICATED = "Constraint {{ constraint }} is duplicated";
 
     /**
      * @param EntityReflection $entity
      * @param array $languages
      */
-    public function __construct(EntityReflection $entity, array $languages, bool $strict = false) {
-
+    public function __construct(EntityReflection $entity, DataCollectorTranslator $translator, array $languages, bool $strict = false) {
+        $this->translator = $translator;
         $this->strict = $strict;
         $this->entity = $entity;
         $this->languages = $languages;
         parent::__construct($entity);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTranslator(): DataCollectorTranslator {
-        return $this->entity->translator;
-    }
-
-  
     /**
      * 
      * @param string $messagePattern
@@ -55,8 +46,8 @@ final class EntityMapping extends EntityCheck implements TranslatorInterface {
     private function getTrans(string $messagePattern, array $param = array()): array {
         $response = [];
         foreach ($this->languages as $lang) {
-            $this->entity->translator->setLocale($lang);
-            $response[$lang] = $this->entity->translator->trans($messagePattern, $param, 'validators');
+            $this->translator->setLocale($lang);
+            $response[$lang] = $this->translator->trans($messagePattern, $param, 'validators');
         }
         return $response;
     }
@@ -64,8 +55,8 @@ final class EntityMapping extends EntityCheck implements TranslatorInterface {
     private function getTransChoice(string $messagePattern, int $number, array $param = array()): array {
         $response = [];
         foreach ($this->languages as $lang) {
-            $this->entity->translator->setLocale($lang);
-            $response[$lang] = $this->entity->translator->transChoice($messagePattern, $number, $param, 'validators');
+            $this->translator->setLocale($lang);
+            $response[$lang] = $this->translator->transChoice($messagePattern, $number, $param, 'validators');
         }
         return $response;
     }
@@ -195,9 +186,9 @@ final class EntityMapping extends EntityCheck implements TranslatorInterface {
             case "Expression":
             case "All":
             case "Valid":
-                throw new \Exception($this->transError(SELF::ERROR_CONSTRAINT_DEPRECIATED, array('{{ constraint }}' => $name)));
+                throw new \Exception(strtr(SELF::ERROR_CONSTRAINT_DEPRECIATED, array('{{ constraint }}' => $name)));
             default :
-                throw new \Exception($this->transError(SELF::ERROR_CONSTRAINT_NOT_SUPPORTED, array('{{ constraint }}' => $name)));
+                throw new \Exception(strtr(SELF::ERROR_CONSTRAINT_NOT_SUPPORTED, array('{{ constraint }}' => $name)));
         }
         $response = new \stdClass();
         $response->name = $name;
@@ -220,7 +211,7 @@ final class EntityMapping extends EntityCheck implements TranslatorInterface {
                     break;
                 default:
                     if (isset($response->{$assert->name})) {
-                        throw new \Exception($this->transError(SELF::ERROR_CONSTRAINT_DUPLICATED, array('{{ constraint }}' => $assert->name)));
+                        throw new \Exception(strtr(SELF::ERROR_CONSTRAINT_DUPLICATED, array('{{ constraint }}' => $assert->name)));
                     }
                     $response->{$assert->name} = $assert->definition;
             }

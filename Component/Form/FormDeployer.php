@@ -4,35 +4,25 @@ namespace JsBundle\Component\Form;
 
 use JsBundle\Component\Entity\EntityMapping;
 use JsBundle\Component\Form\FormReflection;
-use JsBundle\Component\Translator\TranslatorInterface;
 use Symfony\Component\Translation\DataCollectorTranslator;
 
 /**
  * @TODO        : ExtraFields
  */
-final class FormDeployer implements TranslatorInterface {
-    
-    use \JsBundle\Component\Translator\TranslatorErrorTrait;
-    
+final class FormDeployer {
+
+    private $translator;
     private $ownerMapping;
     private $formReflection;
-    
+
     /**
      * @param FormReflection $formReflection
      * @param array $languages
      */
-    public function __construct(FormReflection $formReflection, array $languages) {
-        
+    public function __construct(FormReflection $formReflection, DataCollectorTranslator $translator, array $languages) {
+        $this->translator = $translator;
         $this->formReflection = $formReflection;
-        $this->ownerMapping = new EntityMapping($formReflection->getOwner(), $languages, true);
-    
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getTranslator(): DataCollectorTranslator {
-        return $this->formReflection->getTranslator();
+        $this->ownerMapping = new EntityMapping($formReflection->getOwner(), $this->translator, $languages, true);
     }
 
     /**
@@ -43,7 +33,7 @@ final class FormDeployer implements TranslatorInterface {
         $entityFields = [];
         $extraFields = [];
         foreach ($this->formReflection->getOwnerFields() as $field) {
-            
+
             $entityFields[$field] = $this->ownerMapping->exportAsserts($field);
         }
         foreach ($this->formReflection->getExtraFields() as $field) {

@@ -2,9 +2,7 @@
 
 namespace JsBundle\Component\Entity;
 
-use Symfony\Component\Translation\DataCollectorTranslator;
 use Symfony\Component\Validator\Constraint;
-use JsBundle\Component\Translator\TranslatorInterface;
 
 
 /**
@@ -13,19 +11,16 @@ use JsBundle\Component\Translator\TranslatorInterface;
  * @TODO        : Recursive collection
  * @TODO        : Finish checkAsserts 
  */
-class EntityCheck implements TranslatorInterface{
-    
-    use \JsBundle\Component\Translator\TranslatorErrorTrait;
+class EntityCheck{
     
     private $entity;
 
-
-    const ERROR_CONFIG_FILE_SIZE_MAX = 1;
-    const ERROR_CONFIG_FILE_SIZE_RANGE = 2;
-    const ERROR_CONFIG_RANGE = 3;
-    const ERROR_CONFIG_TYPE = 4;
-    const ERROR_CONFIG_CONSTRAINT_NOT_SUPPORTED = 5;
-    const ERROR_CONFIG_RANGE_ORM = 6;
+    const ERROR_CONFIG_FILE_SIZE_MAX = "Max size {{ max_size }} is greater than php allowed configuration {{ upload_max_filesize }} please call your administrator";
+    const ERROR_CONFIG_FILE_SIZE_RANGE = "Min size {{ min_size }} is greater than Max size {{ max_size }}";
+    const ERROR_CONFIG_RANGE = "Min range {{ min_range }} is greater than Max range {{ max_range }}";
+    const ERROR_CONFIG_TYPE = "Constraint {{ constraint }} is not valid for this type {{ type }}";
+    const ERROR_CONFIG_CONSTRAINT_NOT_SUPPORTED = "Check Constraint {{ constraint }} is not yet supported please call your administrator";
+    const ERROR_CONFIG_RANGE_ORM = "Max range {{ max_range }} is greater than allowed database configuration {{ length }} ";
 
     /**
      * @param \JsBundle\Component\Entity\EntityReflection $entity
@@ -33,14 +28,7 @@ class EntityCheck implements TranslatorInterface{
     public function __construct(EntityReflection $entity) {
          $this->entity = $entity;
     }
-    
-    
-    /**
-     * {@inheritdoc}
-     */
-    public function getTranslator():DataCollectorTranslator{
-        return $this->entity->translator;
-    }
+
 
     /**
      * @param string $type
@@ -80,43 +68,43 @@ class EntityCheck implements TranslatorInterface{
             case "Url":
             case "Email":
                 if (!EntityCheck::isChar($type)) {
-                    throw new \Exception($this->transError(SELF::ERROR_CONFIG_TYPE, array("{{ constraint }}" => $name, "{{ type }}" => $type)));
+                    throw new \Exception(strtr(SELF::ERROR_CONFIG_TYPE, array("{{ constraint }}" => $name, "{{ type }}" => $type)));
                 }
                  break;
             case "Length":
                 if (!EntityCheck::isChar($type)) {
-                    throw new \Exception($this->transError(SELF::ERROR_CONFIG_TYPE, array("{{ constraint }}" => $name, "{{ type }}" => $type)));
+                    throw new \Exception(strtr(SELF::ERROR_CONFIG_TYPE, array("{{ constraint }}" => $name, "{{ type }}" => $type)));
                 }
                 if ($assert->min > $assert->max) {
-                    throw new \Exception($this->transError(SELF::ERROR_CONFIG_RANGE, array("{{ min_range }}" => $assert->min, "{{ max_range }}" => $assert->max)));
+                    throw new \Exception(strtr(SELF::ERROR_CONFIG_RANGE, array("{{ min_range }}" => $assert->min, "{{ max_range }}" => $assert->max)));
                 }
                 if ($assert->max > $length) {
-                    throw new \Exception($this->transError(SELF::ERROR_CONFIG_RANGE_ORM, array("{{ max_range }}" => $assert->max, "{{ length }}" => $length)));
+                    throw new \Exception(strtr(SELF::ERROR_CONFIG_RANGE_ORM, array("{{ max_range }}" => $assert->max, "{{ length }}" => $length)));
                 }
                 break;
             case "Range":
                 if (!EntityCheck::isNumeric($type)) {
-                    throw new \Exception($this->transError(SELF::ERROR_CONFIG_TYPE, array("{{ constraint }}" => $name, "{{ type }}" => $type)));
+                    throw new \Exception(strtr(SELF::ERROR_CONFIG_TYPE, array("{{ constraint }}" => $name, "{{ type }}" => $type)));
                 }
                 if ($assert->min > $assert->max) {
-                    throw new \Exception($this->transError(SELF::ERROR_CONFIG_RANGE, array("{{ min_range }}" => $assert->min, "{{ max_range }}" => $assert->max)));
+                    throw new \Exception(strtr(SELF::ERROR_CONFIG_RANGE, array("{{ min_range }}" => $assert->min, "{{ max_range }}" => $assert->max)));
                 }
                 if ($assert->max > $length) {
-                    throw new \Exception($this->transError(SELF::ERROR_CONFIG_RANGE_ORM, array("{{ max_range }}" => $assert->max, "{{ length }}" => $length)));
+                    throw new \Exception(strtr(SELF::ERROR_CONFIG_RANGE_ORM, array("{{ max_range }}" => $assert->max, "{{ length }}" => $length)));
                 }
                 break;
             case "Image":
             case "File":
                 $upload_max_size = ini_get('upload_max_filesize');
                 if ($assert->maxSize > $upload_max_size) {
-                    throw new \Exception($this->transError(SELF::ERROR_CONFIG_FILE_SIZE_MAX, array("{{ upload_max_filesize }}" => $upload_max_size, "{{ max_size }}" => $assert->maxSize)));
+                    throw new \Exception(strtr(SELF::ERROR_CONFIG_FILE_SIZE_MAX, array("{{ upload_max_filesize }}" => $upload_max_size, "{{ max_size }}" => $assert->maxSize)));
                 }
                 if ($assert->maxSize > $assert->minSize) {
-                    throw new \Exception($this->transError(SELF::ERROR_CONFIG_FILE_SIZE_RANGE, array("{{ min_size }}" => $assert->minSize, "{{ max_size }}" => $assert->maxSize)));
+                    throw new \Exception(strtr(SELF::ERROR_CONFIG_FILE_SIZE_RANGE, array("{{ min_size }}" => $assert->minSize, "{{ max_size }}" => $assert->maxSize)));
                 }
                 break;
             default :
-                throw new \Exception($this->transError(SELF::ERROR_CONFIG_CONSTRAINT_NOT_SUPPORTED, array('{{ constraint }}' => $name)));
+                throw new \Exception(strtr(SELF::ERROR_CONFIG_CONSTRAINT_NOT_SUPPORTED, array('{{ constraint }}' => $name)));
         }
     }
 
