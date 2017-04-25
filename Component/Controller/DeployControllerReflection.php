@@ -5,14 +5,14 @@ namespace JsBundle\Component\Controller;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\Yaml\Yaml;
 
-final class ControllerReflection {
+final class DeployControllerReflection {
     
     private $bundle;
-    private $controllerAlias;
-    
-    public function __construct(Bundle $bundle, string $controllerAlias, bool $strict = false) {
+  
+    const CONTROLLER_ALIAS = "DeployController";
+       
+    public function __construct(Bundle $bundle, bool $strict = false) {
         $this->bundle =$bundle;
-        $this->controllerAlias = $controllerAlias;
     }
     
     public function map(){

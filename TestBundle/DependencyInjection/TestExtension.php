@@ -20,23 +20,20 @@ class TestExtension extends Extension implements DeployerInterface {
      */
     public function deployServices(): array {
         return array(
-            "Deployer" => [
-                  "getUser" => [
-                    "route" => "/user/:id",
-                    "requirements" => ["id" => "\\d+"],
-                    "persistence" => ["User"],
-                    "role" => ["ROLE_USER"],
-                    "method" => ["GET"],
-                ],
-                "setUser" => [
-                    "route" => "/user/:id",
-                    "requirements" => ["id" => "\\d+"],
-                    "role" => ["ROLE_USER"],
-                    "form" => "lock_form",
-                    "method" => ["GET"],
-                ], 
-            ]
-          
+           "getUser" => [
+                "route" => "/user/:id",
+                "requirements" => ["id" => "\\d+"],
+                "persistence" => ["User"],
+                "role" => ["ROLE_USER"],
+                "method" => ["GET"],
+            ],
+            "setUser" => [
+                "route" => "/user/:id",
+                "requirements" => ["id" => "\\d+"],
+                "role" => ["ROLE_USER"],
+                "form" => "lock_form",
+                "method" => ["GET"],
+            ],
         );
     }
 
