@@ -1,2 +1,10 @@
-/TestBundle/composer.lock
-/TestBundle/vendor/
+/**/.idea/*
+/**/.vscode/*
+/**/*.exe
+/**/*.o
+/**/*.dll
+/**/test/*
+/**/*.txt
+composer.lock
+/vendor/
+
