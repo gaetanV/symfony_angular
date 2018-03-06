@@ -9,9 +9,9 @@ ENV KAFKA_HOME=/opt/kafka_"$SCALA_VERSION"-"$KAFKA_VERSION"/
 RUN wget -q http://apache.mirrors.spacedump.net/kafka/"$KAFKA_VERSION"/kafka_"$SCALA_VERSION"-"$KAFKA_VERSION".tgz -O /tmp/kafka_"$SCALA_VERSION"-"$KAFKA_VERSION".tgz
 RUN tar xfz /tmp/kafka_"$SCALA_VERSION"-"$KAFKA_VERSION".tgz -C /opt
 
-COPY ./server.properties "$KAFKA_HOME"/config/server.properties
-COPY ./boot.sh /usr/bin/boot
+COPY ./config/server.properties "$KAFKA_HOME"/config/server.properties
+COPY ./bin/boot.sh /usr/bin/boot
 
-EXPOSE 9092
+COPY ./target/symfony-consumer-2.0.jar  /target/symfony-consumer-2.0.jar
 
-CMD  bash /usr/bin/boot
+CMD boot

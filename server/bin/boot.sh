@@ -7,4 +7,4 @@ $KAFKA_HOME/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replicatio
 $KAFKA_HOME/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic symfonyStats
 
 $KAFKA_HOME/bin/kafka-topics.sh --list --zookeeper localhost:2181
-
+java -jar /target/symfony-consumer-2.0.jar
